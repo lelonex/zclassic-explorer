@@ -1,59 +1,59 @@
 # Zclassic Explorer
 
-Un blockchain explorer moderno e completo per Zclassic (ZCL), costruito con Phoenix Framework ed Elixir.
+A modern and comprehensive blockchain explorer for Zclassic (ZCL), built with Phoenix Framework and Elixir.
 
-## 🌟 Caratteristiche
+## 🌟 Features
 
-- **Esplorazione Blockchain in tempo reale**: Visualizza blocchi, transazioni e indirizzi
-- **Mempool monitoring**: Monitora le transazioni non confermate
-- **Network statistics**: Statistiche della rete inclusi hashrate, difficoltà e nodi connessi
-- **Address tracking**: Traccia balance e transazioni per indirizzi trasparenti e shielded
-- **Responsive UI**: Interfaccia ottimizzata per desktop e mobile
-- **Real-time updates**: Aggiornamenti live tramite Phoenix LiveView
-- **API RESTful**: API per integrazioni esterne
+- **Real-time Blockchain Exploration**: View blocks, transactions and addresses
+- **Mempool Monitoring**: Monitor unconfirmed transactions
+- **Network Statistics**: Network stats including hashrate, difficulty and connected nodes
+- **Address Tracking**: Track balance and transactions for transparent and shielded addresses
+- **Responsive UI**: Optimized interface for desktop and mobile
+- **Real-time Updates**: Live updates via Phoenix LiveView
+- **RESTful API**: API for external integrations
 
-## 📋 Requisiti
+## 📋 Requirements
 
 - **Elixir**: >= 1.7
 - **Erlang/OTP**: >= 22
 - **Node.js**: >= 14.x
-- **PostgreSQL**: >= 12 (opzionale)
-- **Zclassic Daemon (zclassicd)**: Ultima versione
+- **PostgreSQL**: >= 12 (optional)
+- **Zclassic Daemon (zclassicd)**: Latest version
 
-## 🚀 Installazione Rapida
+## 🚀 Quick Installation
 
 ```bash
-# 1. Clona il repository
-git clone https://github.com/yourusername/zclassic-explorer.git
+# 1. Clone repository
+git clone https://github.com/lelonex/zclassic-explorer.git
 cd zclassic-explorer
 
-# 2. Installa dipendenze
+# 2. Install dependencies
 mix deps.get
 cd assets && npm install && cd ..
 
-# 3. Configura variabili d'ambiente
+# 3. Configure environment variables
 cp .env.example .env
-# Modifica .env con le tue impostazioni
+# Edit .env with your settings
 
-# 4. Avvia l'explorer
+# 4. Start explorer
 source .env
 mix phx.server
 ```
 
-Visita [`localhost:4000`](http://localhost:4000)
+Visit [`localhost:4000`](http://localhost:4000)
 
-## 📚 Documentazione Completa
+## 📚 Complete Documentation
 
-- [Guida all'Installazione](docs/INSTALLATION.md) - Installazione dettagliata e configurazione
-- [Configurazione Nodo Zclassic](docs/NODE_SETUP.md) - Setup del nodo zclassicd
-- [API Reference](docs/API.md) - Documentazione completa delle API
-- [Deployment](docs/DEPLOYMENT.md) - Deploy in produzione
-- [Manutenzione](docs/MAINTENANCE.md) - Manutenzione e monitoring
-- [Troubleshooting](docs/TROUBLESHOOTING.md) - Risoluzione problemi comuni
+- [Installation Guide](docs/INSTALLATION.md) - Detailed installation and configuration
+- [Zclassic Node Setup](docs/NODE_SETUP.md) - Setup zclassicd node
+- [API Reference](docs/API.md) - Complete API documentation
+- [Deployment](docs/DEPLOYMENT.md) - Production deployment
+- [Maintenance](docs/MAINTENANCE.md) - Maintenance and monitoring
+- [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues resolution
 
-## 🔧 Configurazione Base
+## 🔧 Basic Configuration
 
-Configura il file `.env`:
+Configure the `.env` file:
 
 ```bash
 # RPC Zclassic Node
@@ -72,7 +72,7 @@ export SECRET_KEY_BASE=$(mix phx.gen.secret)
 ## 🐳 Docker
 
 ```bash
-# Con Docker Compose
+# With Docker Compose
 docker-compose up -d
 ```
 
@@ -92,10 +92,10 @@ curl http://localhost:4000/api/tx/abc123...
 curl http://localhost:4000/api/address/t1.../balance
 ```
 
-## 🛠 Sviluppo
+## 🛠 Development
 
 ```bash
-# Test
+# Tests
 mix test
 
 # Format
@@ -105,14 +105,14 @@ mix format
 mix credo
 ```
 
-## 📄 Licenza
+## 📄 License
 
 Apache License 2.0
 
 ## 🙏 Credits
 
-Basato sul lavoro di Nighthawk Apps per Zcash Explorer.
-Adattato per Zclassic dalla community.
+Based on original work by Nighthawk Apps for Zcash Explorer.
+Adapted for Zclassic by the community.
 
 ---
 
