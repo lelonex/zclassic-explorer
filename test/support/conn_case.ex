@@ -1,4 +1,4 @@
-defmodule ZcashExplorerWeb.ConnCase do
+defmodule ZclassicExplorerWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule ZcashExplorerWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use ZcashExplorerWeb.ConnCase, async: true`, although
+  by setting `use ZclassicExplorerWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -22,20 +22,20 @@ defmodule ZcashExplorerWeb.ConnCase do
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import ZcashExplorerWeb.ConnCase
+      import ZclassicExplorerWeb.ConnCase
 
-      alias ZcashExplorerWeb.Router.Helpers, as: Routes
+      alias ZclassicExplorerWeb.Router.Helpers, as: Routes
 
       # The default endpoint for testing
-      @endpoint ZcashExplorerWeb.Endpoint
+      @endpoint ZclassicExplorerWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ZcashExplorer.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ZclassicExplorer.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(ZcashExplorer.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(ZclassicExplorer.Repo, {:shared, self()})
     end
 
     {:ok, conn: Phoenix.ConnTest.build_conn()}

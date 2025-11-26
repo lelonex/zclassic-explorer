@@ -1,4 +1,4 @@
-defmodule ZcashExplorer.DataCase do
+defmodule ZclassicExplorer.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,7 +10,7 @@ defmodule ZcashExplorer.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use ZcashExplorer.DataCase, async: true`, although
+  by setting `use ZclassicExplorer.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -18,20 +18,20 @@ defmodule ZcashExplorer.DataCase do
 
   using do
     quote do
-      alias ZcashExplorer.Repo
+      alias ZclassicExplorer.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import ZcashExplorer.DataCase
+      import ZclassicExplorer.DataCase
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ZcashExplorer.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ZclassicExplorer.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(ZcashExplorer.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(ZclassicExplorer.Repo, {:shared, self()})
     end
 
     :ok

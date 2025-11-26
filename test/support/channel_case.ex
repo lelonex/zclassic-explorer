@@ -1,4 +1,4 @@
-defmodule ZcashExplorerWeb.ChannelCase do
+defmodule ZclassicExplorerWeb.ChannelCase do
   @moduledoc """
   This module defines the test case to be used by
   channel tests.
@@ -11,7 +11,7 @@ defmodule ZcashExplorerWeb.ChannelCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use ZcashExplorerWeb.ChannelCase, async: true`, although
+  by setting `use ZclassicExplorerWeb.ChannelCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -21,18 +21,18 @@ defmodule ZcashExplorerWeb.ChannelCase do
     quote do
       # Import conveniences for testing with channels
       import Phoenix.ChannelTest
-      import ZcashExplorerWeb.ChannelCase
+      import ZclassicExplorerWeb.ChannelCase
 
       # The default endpoint for testing
-      @endpoint ZcashExplorerWeb.Endpoint
+      @endpoint ZclassicExplorerWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ZcashExplorer.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(ZclassicExplorer.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(ZcashExplorer.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(ZclassicExplorer.Repo, {:shared, self()})
     end
 
     :ok

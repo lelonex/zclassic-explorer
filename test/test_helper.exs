@@ -1,2 +1,2 @@
 ExUnit.start()
-Ecto.Adapters.SQL.Sandbox.mode(ZcashExplorer.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(ZclassicExplorer.Repo, :manual)

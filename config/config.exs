@@ -7,15 +7,15 @@
 # General application configuration
 use Mix.Config
 
-config :zcash_explorer,
-  ecto_repos: [ZcashExplorer.Repo]
+config :zclassic_explorer,
+  ecto_repos: [ZclassicExplorer.Repo]
 
 # Configures the endpoint
-config :zcash_explorer, ZcashExplorerWeb.Endpoint,
+config :zclassic_explorer, ZclassicExplorerWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "rVfb1mphofjIChVV5RIHW32JxP+aNNOGR4TaOrFSmEPhywkGmPjNHHj6QKCnMxDq",
-  render_errors: [view: ZcashExplorerWeb.ErrorView, accepts: ~w(html json), layout: false],
-  pubsub_server: ZcashExplorer.PubSub,
+  render_errors: [view: ZclassicExplorerWeb.ErrorView, accepts: ~w(html json), layout: false],
+  pubsub_server: ZclassicExplorer.PubSub,
   live_view: [signing_salt: "a4lss9+vZQHOxErTzxjNU4IuhAaslE0Z"]
 
 # Configures Elixir's Logger

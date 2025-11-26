@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+  # Zclassic Node
+  zclassic-node:
+    image: ubuntu:22.04
+    container_name: zclassic-node
+    restart: unless-stopped
+    volumes:
+      - zclassic-data:/root/.zclassic
+      - ./scripts:/scripts
+    ports:
+      - "8023:8023"  # RPC
+      - "8033:8033"  # P2P
+    environment:
+      - ZCLASSIC_RPCUSER=${ZCLASSICD_USERNAME:-zclassic}
+      - ZCLASSIC_RPCPASSWORD=${ZCLASSICD_PASSWORD:-changeme}
+    command: >
+      sh -c "
+      apt-get update &&
+      apt-get install -y wget &&
+      echo 'Download and setup zclassicd here' &&
+      tail -f /dev/null
+      "
+    networks:
+      - zclassic-network
+
+  # Explorer
+  explorer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: zclassic-explorer
+    restart: unless-stopped
+    depends_on:
+      - zclassic-node
+    ports:
+      - "4000:4000"
+    environment:
+      - MIX_ENV=prod
+      - PORT=4000
+      - SECRET_KEY_BASE=${SECRET_KEY_BASE}
+      - ZCLASSICD_HOSTNAME=zclassic-node
+      - ZCLASSICD_PORT=8023
+      - ZCLASSICD_USERNAME=${ZCLASSICD_USERNAME:-zclassic}
+      - ZCLASSICD_PASSWORD=${ZCLASSICD_PASSWORD:-changeme}
+      - EXPLORER_HOSTNAME=${EXPLORER_HOSTNAME:-localhost}
+      - EXPLORER_PORT=4000
+      - EXPLORER_SCHEME=${EXPLORER_SCHEME:-http}
+      - ZCLASSIC_NETWORK=${ZCLASSIC_NETWORK:-mainnet}
+    volumes:
+      - ./log:/app/log
+    networks:
+      - zclassic-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # PostgreSQL (Optional)
+  postgres:
+    image: postgres:14-alpine
+    container_name: zclassic-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=zclassic
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-zclassic_password}
+      - POSTGRES_DB=zclassic_explorer_prod
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - zclassic-network
+    profiles:
+      - with-db
+
+  # Nginx Reverse Proxy (Optional)
+  nginx:
+    image: nginx:alpine
+    container_name: zclassic-nginx
+    restart: unless-stopped
+    depends_on:
+      - explorer
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - nginx-cache:/var/cache/nginx
+    networks:
+      - zclassic-network
+    profiles:
+      - with-nginx
+
+volumes:
+  zclassic-data:
+    driver: local
+  postgres-data:
+    driver: local
+  nginx-cache:
+    driver: local
+
+networks:
+  zclassic-network:
+    driver: bridge

@@ -1,10 +1,10 @@
 use Mix.Config
 
 # Configure your database
-config :zcash_explorer, ZcashExplorer.Repo,
+config :zclassic_explorer, ZclassicExplorer.Repo,
   username: "postgres",
   password: "postgres",
-  database: "zcash_explorer_dev",
+  database: "zclassic_explorer_dev",
   hostname: "localhost",
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -15,7 +15,7 @@ config :zcash_explorer, ZcashExplorer.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
-config :zcash_explorer, ZcashExplorerWeb.Endpoint,
+config :zclassic_explorer, ZclassicExplorerWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
@@ -36,15 +36,15 @@ config :zcash_explorer, ZcashExplorerWeb.Endpoint,
     ]
   ]
 
-config :zcash_explorer, Zcashex,
-  zcashd_hostname: "localhost",
-  zcashd_port: "8232",
-  zcashd_username: "nighthawkapps",
-  zcashd_password: "ffwf",
+config :zclassic_explorer, Zclassicex,
+  zclassicd_hostname: "localhost",
+  zclassicd_port: "8023",
+  zclassicd_username: "zclassic",
+  zclassicd_password: "changeme",
   vk_cpus: "0.2",
   vk_mem: "2048M",
-  vk_runnner_image: "nighthawkapps/vkrunner",
-  zcash_network: "mainnet"
+  vk_runnner_image: "zclassic/vkrunner",
+  zclassic_network: "mainnet"
 
 # ## SSL Support
 #
@@ -71,13 +71,13 @@ config :zcash_explorer, Zcashex,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :zcash_explorer, ZcashExplorerWeb.Endpoint,
+config :zclassic_explorer, ZclassicExplorerWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/zcash_explorer_web/(live|views)/.*(ex)$",
-      ~r"lib/zcash_explorer_web/templates/.*(eex)$"
+      ~r"lib/zclassic_explorer_web/(live|views)/.*(ex)$",
+      ~r"lib/zclassic_explorer_web/templates/.*(eex)$"
     ]
   ]
 

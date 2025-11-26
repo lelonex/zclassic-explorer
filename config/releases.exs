@@ -9,28 +9,28 @@ secret_key_base =
     You can generate one by calling: mix phx.gen.secret
     """
 
-zcashd_hostname =
-  System.fetch_env!("ZCASHD_HOSTNAME") ||
+zclassicd_hostname =
+  System.fetch_env!("ZCLASSICD_HOSTNAME") ||
     raise """
-    environment variable ZCASHD_HOSTNAME is missing
+    environment variable ZCLASSICD_HOSTNAME is missing
     """
 
-zcashd_port =
-  System.fetch_env!("ZCASHD_PORT") ||
+zclassicd_port =
+  System.fetch_env!("ZCLASSICD_PORT") ||
     raise """
-    environment variable ZCASHD_PORT is missing
+    environment variable ZCLASSICD_PORT is missing
     """
 
-zcashd_username =
-  System.fetch_env!("ZCASHD_USERNAME") ||
+zclassicd_username =
+  System.fetch_env!("ZCLASSICD_USERNAME") ||
     raise """
-    environment variable ZCASHD_USERNAME is missing
+    environment variable ZCLASSICD_USERNAME is missing
     """
 
-zcashd_password =
-  System.fetch_env!("ZCASHD_PASSWORD") ||
+zclassicd_password =
+  System.fetch_env!("ZCLASSICD_PASSWORD") ||
     raise """
-    environment variable ZCASHD_PASSWORD is missing
+    environment variable ZCLASSICD_PASSWORD is missing
     """
 
 explorer_hostname =
@@ -57,13 +57,13 @@ vk_runnner_image =
     environment variable VK_RUNNER_IMAGE is missing
     """
 
-zcash_network =
-  System.fetch_env!("ZCASH_NETWORK") ||
+zclassic_network =
+  System.fetch_env!("ZCLASSIC_NETWORK") ||
     raise """
-    environment variable ZCASH_NETWORK is missing
+    environment variable ZCLASSIC_NETWORK is missing
     """
 
-config :zcash_explorer, ZcashExplorerWeb.Endpoint,
+config :zclassic_explorer, ZclassicExplorerWeb.Endpoint,
   url: [
     host: explorer_hostname,
     port: String.to_integer(System.get_env("EXPLORER_PORT") || "443"),
@@ -77,19 +77,18 @@ config :zcash_explorer, ZcashExplorerWeb.Endpoint,
   # add all the domain names that will be routed to this application ( including TOR Onion Service)
   check_origin: [
     "http://127.0.0.1:4000",
-    "//zcashblockexplorer.com",
-    "//testnet.zcashblockexplorer.com",
-    "//zcashfgzdzxwiy7yq74uejvo2ykppu4pzgioplcvdnpmc6gcu5k6vwyd.onion"
+    "//zclassicexplorer.com",
+    "//testnet.zclassicexplorer.com"
   ]
 
-config :zcash_explorer, Zcashex,
-  zcashd_hostname: zcashd_hostname,
-  zcashd_port: zcashd_port,
-  zcashd_username: zcashd_username,
-  zcashd_password: zcashd_password,
+config :zclassic_explorer, Zclassicex,
+  zclassicd_hostname: zclassicd_hostname,
+  zclassicd_port: zclassicd_port,
+  zclassicd_username: zclassicd_username,
+  zclassicd_password: zclassicd_password,
   vk_cpus: vk_cpus,
   vk_mem: vk_mem,
   vk_runnner_image: vk_runnner_image,
-  zcash_network: zcash_network
+  zclassic_network: zclassic_network
 
-config :zcash_explorer, ZcashExplorerWeb.Endpoint, server: true
+config :zclassic_explorer, ZclassicExplorerWeb.Endpoint, server: true

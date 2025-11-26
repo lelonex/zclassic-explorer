@@ -1,9 +1,9 @@
-defmodule ZcashExplorer.MixProject do
+defmodule ZclassicExplorer.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :zcash_explorer,
+      app: :zclassic_explorer,
       version: "0.1.0",
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,7 +19,7 @@ defmodule ZcashExplorer.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {ZcashExplorer.Application, []},
+      mod: {ZclassicExplorer.Application, []},
       extra_applications: [:logger, :runtime_tools, :os_mon, :cachex]
     ]
   end
@@ -52,7 +52,7 @@ defmodule ZcashExplorer.MixProject do
       {:cachex, "~> 3.3"},
       {:phoenix_live_view, "~> 0.17.9"},
       {:floki, ">= 0.27.0", only: :test},
-      {:zcashex, github: "nighthawk-apps/zcashex"},
+      {:zclassicex, github: "z-classic/zclassicex"},
       {:timex, "~> 3.0"},
       {:sizeable, "~> 1.0"},
       {:eqrcode, "~> 0.1.8"},

@@ -1,6 +1,6 @@
 DOCKER_IMAGE_NAME = zbe
 DOCKER_CONTAINER_NAME = zbe
-DOCKER_GHCR_IMAGE_NAME = ghcr.io/nighthawk-apps/zcash-explorer
+DOCKER_GHCR_IMAGE_NAME = ghcr.io/nighthawk-apps/zclassic-explorer
 
 .PHONY: docker_build docker_run docker_clean docker_publish
 
