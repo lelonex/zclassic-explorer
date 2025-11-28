@@ -2,6 +2,10 @@ defmodule ZclassicExplorerWeb.BlockView do
   alias ZclassicExplorerWeb.TransactionView
   use ZclassicExplorerWeb, :view
 
+  def zcash_network do
+    Application.get_env(:zclassic_explorer, Zclassicex)[:zcash_network] || "mainnet"
+  end
+
   def mined_time(nil) do
     "Not yet mined"
   end
@@ -25,32 +29,35 @@ defmodule ZclassicExplorerWeb.BlockView do
   end
 
   def vin_count(txs) do
-    txs |> Enum.reduce(0, fn x, acc -> length(x.vin) + acc end)
+    txs |> Enum.reduce(0, fn x, acc -> length(Map.get(x, "vin", [])) + acc end)
   end
 
   def vout_count(txs) do
-    txs |> Enum.reduce(0, fn x, acc -> length(x.vout) + acc end)
+    txs |> Enum.reduce(0, fn x, acc -> length(Map.get(x, "vout", [])) + acc end)
   end
 
-  def is_coinbase_tx?(tx) when tx.vin == [] do
-    false
+  def is_coinbase_tx?(tx) when is_map(tx) do
+    vin = Map.get(tx, "vin", [])
+    is_coinbase_tx_from_vin(vin)
   end
-
-  def is_coinbase_tx?(tx) when length(tx.vin) > 0 do
-    first_tx = tx.vin |> List.first()
-
-    case Map.fetch(first_tx, :coinbase) do
+  
+  defp is_coinbase_tx_from_vin([]), do: false
+  defp is_coinbase_tx_from_vin(vin) when is_list(vin) do
+    first_tx = List.first(vin)
+    case Map.fetch(first_tx, "coinbase") do
       {:ok, nil} -> false
       {:ok, _value} -> true
       {:error, _reason} -> false
+      :error -> false
     end
   end
+  defp is_coinbase_tx_from_vin(_), do: false
 
   def get_coinbase_hex(tx) do
     tx
-    |> Map.get(:vin)
+    |> Map.get("vin", [])
     |> List.first()
-    |> Map.get(:coinbase)
+    |> Map.get("coinbase")
     |> decode_coinbase_tx_hex()
 
     # |> String.normalize(:nfkc)
@@ -72,105 +79,125 @@ defmodule ZclassicExplorerWeb.BlockView do
 
     if is_coinbase_tx?(first_trx) do
       first_trx
-      |> Map.get(:vout)
+      |> Map.get("vout", [])
       |> List.first()
-      |> Map.get(:scriptPubKey)
-      |> Map.get(:addresses)
+      |> Map.get("scriptPubKey", %{})
+      |> Map.get("addresses", [])
       |> List.first()
     end
   end
 
-  def input_total(txs) do
-    [hd | tail] = txs
-
-    tail
-    |> Enum.map(fn x -> Map.get(x, :vin) end)
-    |> List.flatten()
-    |> Enum.reduce(0, fn x, acc -> Map.get(x, :value) + acc end)
-    |> Kernel.+(0.0)
-    |> :erlang.float_to_binary([:compact, {:decimals, 10}])
-  end
-
-  def output_total(txs) do
+  def input_total(txs) when is_list(txs) and length(txs) > 0 do
     txs
-    |> Enum.map(fn x -> Map.get(x, :vout) end)
-    |> List.flatten()
-    |> Enum.reduce(0, fn x, acc -> Map.get(x, :value) + acc end)
-    |> Kernel.+(0.0)
-    |> :erlang.float_to_binary([:compact, {:decimals, 10}])
+    |> Enum.drop(1)  # Skip coinbase transaction
+    |> Enum.flat_map(fn x -> Map.get(x, "vin", []) end)
+    |> Enum.reduce(0, fn x, acc -> 
+      value = Map.get(x, "value", 0) || 0
+      acc + value
+    end)
+    |> Kernel.*(1.0)
+    |> Float.to_string()
   end
+  def input_total(_), do: "0"
 
-  def tx_out_total(%Zclassicex.Transaction{} = tx) do
-    tx
-    |> Map.get(:vout)
-    |> List.flatten()
-    |> Enum.reduce(0, fn x, acc -> Map.get(x, :value) + acc end)
-    |> Kernel.+(0.0)
-    |> :erlang.float_to_binary([:compact, {:decimals, 10}])
+  def output_total(txs) when is_list(txs) do
+    txs
+    |> Enum.flat_map(fn x -> Map.get(x, "vout", []) end)
+    |> Enum.reduce(0, fn x, acc -> 
+      value = Map.get(x, "value", 0) || 0
+      acc + value
+    end)
+    |> Kernel.*(1.0)
+    |> Float.to_string()
   end
+  def output_total(_), do: "0"
 
   def tx_out_total(tx) when is_map(tx) do
     tx
-    |> Map.get("vout")
-    |> List.flatten()
-    |> Enum.reduce(0, fn x, acc -> Map.get(x, "value") + acc end)
-    |> Kernel.+(0.0)
-    |> :erlang.float_to_binary([:compact, {:decimals, 10}])
+    |> Map.get("vout", [])
+    |> Enum.reduce(0, fn x, acc -> 
+      value = Map.get(x, "value", 0) || 0
+      acc + value
+    end)
+    |> Kernel.*(1.0)
+    |> Float.to_string()
   end
+  def tx_out_total(_), do: "0"
 
   # detect if a transaction is Public
   # https://z.cash/technology/
-  def transparent_in_and_out(tx) do
-    length(tx.vin) > 0 and length(tx.vout) > 0
+  def transparent_in_and_out(tx) when is_map(tx) do
+    vin = Map.get(tx, "vin", [])
+    vout = Map.get(tx, "vout", [])
+    length(vin) > 0 and length(vout) > 0
   end
+  def transparent_in_and_out(_), do: false
 
-  def contains_sprout(tx) do
-    length(tx.vjoinsplit) > 0
+  def contains_sprout(tx) when is_map(tx) do
+    vjoinsplit = Map.get(tx, "vjoinsplit", [])
+    length(vjoinsplit) > 0
   end
+  def contains_sprout(_), do: false
 
-  def contains_orchard(tx) do
+  def contains_orchard(tx) when is_map(tx) do
     TransactionView.orchard_actions(tx) > 0
   end
+  def contains_orchard(_), do: false
 
-  def get_joinsplit_count(tx) do
-    length(tx.vjoinsplit)
+  def get_joinsplit_count(tx) when is_map(tx) do
+    vjoinsplit = Map.get(tx, "vjoinsplit", [])
+    length(vjoinsplit)
   end
+  def get_joinsplit_count(_), do: 0
 
-  def contains_sapling(tx) do
-    value_balance = Map.get(tx, :valueBalance) || 0.0
-    vshielded_spend = Map.get(tx, :vShieldedSpend) || []
-    vshielded_output = Map.get(tx, :vShieldedOutput) || []
-    value_balance != 0.0 and (length(vshielded_spend) > 0 || length(vshielded_output) > 0)
+  def contains_sapling(tx) when is_map(tx) do
+    value_balance = Map.get(tx, "valueBalance") || 0.0
+    vshielded_spend = Map.get(tx, "vShieldedSpend", [])
+    vshielded_output = Map.get(tx, "vShieldedOutput", [])
+    value_balance != 0.0 and (length(vshielded_spend) > 0 or length(vshielded_output) > 0)
   end
+  def contains_sapling(_), do: false
 
-  def is_shielded_tx?(tx) do
+  def is_shielded_tx?(tx) when is_map(tx) do
     !transparent_in_and_out(tx) and
       (contains_sprout(tx) or contains_sapling(tx) or contains_orchard(tx))
   end
+  def is_shielded_tx?(_), do: false
 
-  def is_transparent_tx?(tx) do
-    value_balance = Map.get(tx, :valueBalance) || 0.0
-    vshielded_spend = Map.get(tx, :vShieldedSpend) || []
-    vshielded_output = Map.get(tx, :vShieldedOutput) || []
+  def is_transparent_tx?(tx) when is_map(tx) do
+    value_balance = Map.get(tx, "valueBalance") || 0.0
+    vshielded_spend = Map.get(tx, "vShieldedSpend", [])
+    vshielded_output = Map.get(tx, "vShieldedOutput", [])
+    vjoinsplit = Map.get(tx, "vjoinsplit", [])
 
-    transparent_in_and_out(tx) && length(tx.vjoinsplit) == 0 && value_balance == 0.0 &&
+    transparent_in_and_out(tx) && length(vjoinsplit) == 0 && value_balance == 0.0 &&
       length(vshielded_spend) == 0 && length(vshielded_output) == 0
   end
+  def is_transparent_tx?(_), do: false
 
-  def is_mixed_tx?(tx) do
-    t_in_or_out = length(tx.vin) > 0 or length(tx.vout) > 0
-    t_in_or_out and (contains_sprout(tx) || contains_sapling(tx) || contains_orchard(tx))
+  def is_mixed_tx?(tx) when is_map(tx) do
+    vin = Map.get(tx, "vin", [])
+    vout = Map.get(tx, "vout", [])
+    t_in_or_out = length(vin) > 0 or length(vout) > 0
+    t_in_or_out and (contains_sprout(tx) or contains_sapling(tx) or contains_orchard(tx))
   end
+  def is_mixed_tx?(_), do: false
 
-  def is_shielding(tx) do
-    tin_and_zout = length(tx.vin) > 0 and length(tx.vout) == 0
-    tin_and_zout and (contains_sprout(tx) || contains_sapling(tx) || contains_orchard(tx))
+  def is_shielding(tx) when is_map(tx) do
+    vin = Map.get(tx, "vin", [])
+    vout = Map.get(tx, "vout", [])
+    tin_and_zout = length(vin) > 0 and length(vout) == 0
+    tin_and_zout and (contains_sprout(tx) or contains_sapling(tx) or contains_orchard(tx))
   end
+  def is_shielding(_), do: false
 
-  def is_deshielding(tx) do
-    zin_and_tout = length(tx.vin) == 0 and length(tx.vout) > 0
-    zin_and_tout and (contains_sprout(tx) || contains_sapling(tx) || contains_orchard(tx))
+  def is_deshielding(tx) when is_map(tx) do
+    vin = Map.get(tx, "vin", [])
+    vout = Map.get(tx, "vout", [])
+    zin_and_tout = length(vin) == 0 and length(vout) > 0
+    zin_and_tout and (contains_sprout(tx) or contains_sapling(tx) or contains_orchard(tx))
   end
+  def is_deshielding(_), do: false
 
   def tx_type(tx) do
     cond do

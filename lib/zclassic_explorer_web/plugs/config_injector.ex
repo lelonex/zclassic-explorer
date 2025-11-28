@@ -4,7 +4,7 @@ defmodule ZclassicExplorerWeb.Plugs.ConfigInjector do
   def init(default), do: default
 
   def call(conn, _opts) do
-    zcash_network = Application.get_env(:zcash_explorer, Zclassicex)[:zcash_network]
-    assign(conn, :zcash_network, zcash_network)
+    zclassic_network = Application.get_env(:zclassic_explorer, Zclassicex)[:zclassic_network]
+    assign(conn, :zclassic_network, zclassic_network)
   end
 end

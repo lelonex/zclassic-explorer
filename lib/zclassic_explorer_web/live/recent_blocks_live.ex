@@ -1,9 +1,10 @@
 defmodule ZclassicExplorerWeb.RecentBlocksLive do
   use ZclassicExplorerWeb, :live_view
   import Phoenix.LiveView.Helpers
+  
   @impl true
   def render(assigns) do
-    ~L"""
+    ~H"""
     <div class="shadow overflow-hidden border-gray-200 rounded-lg overflow-x-auto">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -13,20 +14,19 @@ defmodule ZclassicExplorerWeb.RecentBlocksLive do
                 <th scope="col" class="px-4 py-3">Mined on</th>
                 <th scope="col" class="px-4 py-3">Txns</th>
                 <th scope="col" class="px-4 py-3">Size</th>
-                <th scope="col" class="px-4 py-3">Output ( <%= if @chain == "main", do: "ZEC", else: "TAZ" %> )
-                </th>
+                <th scope="col" class="px-4 py-3">Output ( <%= if @chain == "main", do: "ZCL", else: "ZCL testnet" %> )</th>
             </tr>
             </thead>
     <tbody>
       <%= for block <- @block_cache do %>
             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-white dark:hover:text-white">
-            <a href='/blocks/<%= block["height"] %>'>
+            <a href={"/blocks/#{block["height"]}"}>
                 <%= block["height"] %>
-              </td>
             </a>
+              </td>
             <td class="px-4 py-4 whitespace-nowrap">
-                    <a href='/blocks/<%= block["hash"] %>'>
+                    <a href={"/blocks/#{block["hash"]}"}>
                     <%= block["hash"] %>
                     </a>
               </td>
@@ -42,11 +42,11 @@ defmodule ZclassicExplorerWeb.RecentBlocksLive do
              <td class="px-4 py-4 whitespace-nowrap">
                 <%= block["output_total"] %>
               </td>
-
             </tr>
             <% end %>
     </tbody>
     </table>
+    </div>
     """
   end
 
@@ -55,19 +55,26 @@ defmodule ZclassicExplorerWeb.RecentBlocksLive do
     if connected?(socket), do: Process.send_after(self(), :update, 1000)
 
     case Cachex.get(:app_cache, "block_cache") do
-      {:ok, info} ->
-        {:ok, %{"chain" => chain}} = Cachex.get(:app_cache, "metrics")
+      {:ok, info} when is_list(info) ->
+        chain = case Cachex.get(:app_cache, "metrics") do
+          {:ok, %{"chain" => c}} -> c
+          _ -> "main"
+        end
         {:ok, assign(socket, block_cache: info, chain: chain)}
 
-      {:error, _reason} ->
-        {:ok, assign(socket, :block_cache, "loading...")}
+      _ ->
+        {:ok, assign(socket, block_cache: [], chain: "main")}
     end
   end
 
   @impl true
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 1000)
-    {:ok, info} = Cachex.get(:app_cache, "block_cache")
-    {:noreply, assign(socket, :block_cache, info)}
+    case Cachex.get(:app_cache, "block_cache") do
+      {:ok, info} when is_list(info) ->
+        {:noreply, assign(socket, :block_cache, info)}
+      _ ->
+        {:noreply, socket}
+    end
   end
 end

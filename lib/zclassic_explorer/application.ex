@@ -39,7 +39,10 @@ defmodule ZclassicExplorer.Application do
          warmer(module: ZclassicExplorer.Mempool.MempoolWarmer, state: {}),
          warmer(module: ZclassicExplorer.Nodes.NodeWarmer, state: {}),
          warmer(module: ZclassicExplorer.Metrics.InfoWarmer, state: {})
-       ]}
+       ]},
+      ZclassicExplorer.Price.PriceFetcher,
+      ZclassicExplorer.RichList.RichListUpdater,
+      ZclassicExplorer.Statistics.StatsTracker
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

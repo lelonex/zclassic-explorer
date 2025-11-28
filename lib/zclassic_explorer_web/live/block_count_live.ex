@@ -20,14 +20,18 @@ defmodule ZclassicExplorerWeb.BlockCountLive do
         {:ok, assign(socket, :block_count, info["blocks"])}
 
       {:error, _reason} ->
-        {:ok, assign(socket, :block_count, "loading...")}
+        {:ok, assign(socket, :block_count, 0)}
     end
   end
 
   @impl true
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 15000)
-    {:ok, info} = Cachex.get(:app_cache, "metrics")
-    {:noreply, assign(socket, :block_count, info["blocks"])}
+    case Cachex.get(:app_cache, "metrics") do
+      {:ok, info} when is_map(info) ->
+        {:noreply, assign(socket, :block_count, info["blocks"])}
+      _ ->
+        {:noreply, socket}
+    end
   end
 end

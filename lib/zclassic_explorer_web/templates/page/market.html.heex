@@ -1,0 +1,44 @@
+<div class="w-full px-4 py-5">
+
+<!-- Prezzo ZCL da CoinGecko -->
+<div class="mb-5">
+  <%= live_render(@conn, ZclassicExplorerWeb.PriceLive) %>
+</div>
+
+<!-- TradingView Widget -->
+<div class="mb-5 bg-white dark:bg-gray-800 rounded-lg shadow p-4" style="height: 600px;">
+  <!-- TradingView Widget BEGIN -->
+  <div class="tradingview-widget-container" style="height:100%;width:100%">
+    <div class="tradingview-widget-container__widget" style="height:calc(100% - 32px);width:100%"></div>
+    <div class="tradingview-widget-copyright"><a href="https://www.tradingview.com/symbols/ZCLUSD/?exchange=CRYPTO" rel="noopener nofollow" target="_blank"><span class="blue-text">ZCLUSD price</span></a><span class="trademark"> by TradingView</span></div>
+    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+    {
+    "allow_symbol_change": true,
+    "calendar": false,
+    "details": false,
+    "hide_side_toolbar": true,
+    "hide_top_toolbar": false,
+    "hide_legend": false,
+    "hide_volume": false,
+    "hotlist": false,
+    "interval": "240",
+    "locale": "en",
+    "save_image": true,
+    "style": "8",
+    "symbol": "CRYPTO:ZCLUSD",
+    "theme": "dark",
+    "timezone": "Etc/UTC",
+    "backgroundColor": "#0F0F0F",
+    "gridColor": "rgba(242, 242, 242, 0.06)",
+    "watchlist": [],
+    "withdateranges": false,
+    "compareSymbols": [],
+    "studies": [],
+    "autosize": true
+    }
+    </script>
+  </div>
+  <!-- TradingView Widget END -->
+</div>
+
+</div>

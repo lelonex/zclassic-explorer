@@ -1,5 +1,5 @@
 defmodule ZclassicExplorer.Repo do
   use Ecto.Repo,
-    otp_app: :zcash_explorer,
+    otp_app: :zclassic_explorer,
     adapter: Ecto.Adapters.Postgres
 end

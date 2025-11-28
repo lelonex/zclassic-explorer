@@ -3,7 +3,7 @@ defmodule ZclassicExplorerWeb.BlockChainInfoLive do
   import Phoenix.LiveView.Helpers
   @impl true
   def render(assigns) do
-    currency = if(assigns.blockchain_info["chain"] == "main", do: "ZEC", else: "TAZ")
+    currency = if(assigns.blockchain_info["chain"] == "main", do: "ZCL", else: "ZCL testnet")
 
     ~L"""
     <div>
@@ -88,17 +88,26 @@ defmodule ZclassicExplorerWeb.BlockChainInfoLive do
         {:ok, assign(socket, :blockchain_info, info)}
 
       {:error, _reason} ->
-        {:ok, assign(socket, :blockchain_info, "loading...")}
+        {:ok, assign(socket, :blockchain_info, %{})}
     end
   end
 
   @impl true
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 15000)
-    {:ok, info} = Cachex.get(:app_cache, "metrics")
-    {:ok, %{"build" => build}} = Cachex.get(:app_cache, "info")
-    info = Map.put(info, "build", build)
-    {:noreply, assign(socket, :blockchain_info, info)}
+    
+    case Cachex.get(:app_cache, "metrics") do
+      {:ok, info} when is_map(info) ->
+        case Cachex.get(:app_cache, "info") do
+          {:ok, %{"build" => build}} ->
+            info = Map.put(info, "build", build)
+            {:noreply, assign(socket, :blockchain_info, info)}
+          _ ->
+            {:noreply, assign(socket, :blockchain_info, info)}
+        end
+      _ ->
+        {:noreply, socket}
+    end
   end
 
   defp sprout_value(value_pools) do

@@ -12,21 +12,25 @@ defmodule ZclassicExplorerWeb.DifficultyLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Process.send_after(self(), :update, 5000)
+    if connected?(socket), do: Process.send_after(self(), :update, 15000)
 
     case Cachex.get(:app_cache, "metrics") do
-      {:ok, info} ->
+      {:ok, info} when is_map(info) ->
         {:ok, assign(socket, :difficulty, info["difficulty"])}
 
-      {:error, _reason} ->
-        {:ok, assign(socket, :difficulty, "loading...")}
+      _ ->
+        {:ok, assign(socket, :difficulty, 0)}
     end
   end
 
   @impl true
   def handle_info(:update, socket) do
-    Process.send_after(self(), :update, 5000)
-    {:ok, info} = Cachex.get(:app_cache, "metrics")
-    {:noreply, assign(socket, :difficulty, info["difficulty"])}
+    Process.send_after(self(), :update, 15000)
+    case Cachex.get(:app_cache, "metrics") do
+      {:ok, info} when is_map(info) ->
+        {:noreply, assign(socket, :difficulty, info["difficulty"])}
+      _ ->
+        {:noreply, socket}
+    end
   end
 end

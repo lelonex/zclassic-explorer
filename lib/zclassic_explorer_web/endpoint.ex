@@ -1,5 +1,5 @@
 defmodule ZclassicExplorerWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :zcash_explorer
+  use Phoenix.Endpoint, otp_app: :zclassic_explorer
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
@@ -22,7 +22,7 @@ defmodule ZclassicExplorerWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :zcash_explorer,
+    from: :zclassic_explorer,
     gzip: true,
     only: ~w(css fonts images js favicon.ico robots.txt privacy.html)
 
@@ -32,7 +32,7 @@ defmodule ZclassicExplorerWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
-    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :zcash_explorer
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :zclassic_explorer
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,

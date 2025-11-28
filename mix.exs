@@ -50,9 +50,10 @@ defmodule ZclassicExplorer.MixProject do
       {:poison, "~> 3.1"},
       {:observer_cli, "~> 1.6"},
       {:cachex, "~> 3.3"},
+      {:cubdb, "~> 2.0"},
       {:phoenix_live_view, "~> 0.17.9"},
       {:floki, ">= 0.27.0", only: :test},
-      {:zclassicex, github: "z-classic/zclassicex"},
+      # Note: zclassicex is implemented directly in lib/zclassicex.ex (no external dependency needed)
       {:timex, "~> 3.0"},
       {:sizeable, "~> 1.0"},
       {:eqrcode, "~> 0.1.8"},

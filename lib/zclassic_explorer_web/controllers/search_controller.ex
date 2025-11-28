@@ -13,8 +13,7 @@ defmodule ZclassicExplorerWeb.SearchController do
     tasks = [
       Task.async(fn -> Zclassicex.getblock(qs, 0) end),
       Task.async(fn -> Zclassicex.getrawtransaction(qs, 0) end),
-      Task.async(fn -> Zclassicex.validateaddress(qs) end),
-      Task.async(fn -> Zclassicex.z_validateaddress(qs) end)
+      Task.async(fn -> Zclassicex.validateaddress(qs) end)
     ]
 
     run = Task.yield_many(tasks, 5000)
@@ -29,12 +28,10 @@ defmodule ZclassicExplorerWeb.SearchController do
     {:ok, block_resp} = Enum.at(results, 0)
     {:ok, tx_resp} = Enum.at(results, 1)
     {:ok, tadd_resp} = Enum.at(results, 2)
-    {:ok, zadd_resp} = Enum.at(results, 3)
 
     IO.inspect(block_resp)
     IO.inspect(tx_resp)
     IO.inspect(tadd_resp)
-    IO.inspect(zadd_resp)
 
     cond do
       is_valid_block?(block_resp) ->
@@ -45,12 +42,6 @@ defmodule ZclassicExplorerWeb.SearchController do
 
       is_valid_taddr?(tadd_resp) ->
         redirect(conn, to: "/address/#{qs}")
-
-      is_valid_zaddr?(zadd_resp) ->
-        redirect(conn, to: "/address/#{qs}")
-
-      is_valid_unified_address?(zadd_resp) ->
-        redirect(conn, to: "/ua/#{qs}")
 
       true ->
         conn

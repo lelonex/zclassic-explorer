@@ -5,28 +5,37 @@ defmodule ZclassicExplorerWeb.MempoolInfoLive do
   def render(assigns) do
     ~L"""
     <p class="text-2xl font-semibold text-gray-900 dark:dark:bg-slate-800 dark:text-slate-100">
-    <%= @mempool_info %>
+    <%= case assigns.mempool_info do
+      %{"size" => size} -> size
+      %{"bytes" => bytes} -> bytes
+      info when is_map(info) -> Map.get(info, "size", Map.get(info, "bytes", 0))
+      _ -> 0
+    end %>
     </p>
     """
   end
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket), do: Process.send_after(self(), :update, 1000)
+    if connected?(socket), do: Process.send_after(self(), :update, 15000)
 
     case Cachex.get(:app_cache, "mempool_info") do
       {:ok, info} ->
-        {:ok, assign(socket, :mempool_info, info["size"])}
+        {:ok, assign(socket, :mempool_info, info)}
 
-      {:error, _reason} ->
-        {:ok, assign(socket, :mempool_info, "loading...")}
+      _ ->
+        {:ok, assign(socket, :mempool_info, %{})}
     end
   end
 
   @impl true
   def handle_info(:update, socket) do
-    Process.send_after(self(), :update, 1000)
-    {:ok, info} = Cachex.get(:app_cache, "mempool_info")
-    {:noreply, assign(socket, :mempool_info, info["size"])}
+    Process.send_after(self(), :update, 15000)
+    case Cachex.get(:app_cache, "mempool_info") do
+      {:ok, info} ->
+        {:noreply, assign(socket, :mempool_info, info)}
+      _ ->
+        {:noreply, socket}
+    end
   end
 end

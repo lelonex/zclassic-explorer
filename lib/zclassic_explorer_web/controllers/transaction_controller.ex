@@ -2,10 +2,17 @@ defmodule ZclassicExplorerWeb.TransactionController do
   use ZclassicExplorerWeb, :controller
 
   def get_transaction(conn, %{"txid" => txid}) do
-    {:ok, tx} = Zclassicex.getrawtransaction(txid, 1)
-    tx_data = Zclassicex.Transaction.from_map(tx)
-    # IO.inspect(tx_data |> Map.delete(:hex))
-    render(conn, "tx.html", tx: tx_data, page_title: "Zcash Transaction #{txid}")
+    case Zclassicex.getrawtransaction(txid, 1) do
+      {:ok, tx} when is_map(tx) ->
+        # tx is already a map from RPC, no need for struct conversion
+        render(conn, "tx.html", tx: tx, page_title: "Zclassic Transaction #{txid}")
+
+      {:error, _} ->
+        conn
+        |> put_status(:not_found)
+        |> put_view(ZclassicExplorerWeb.ErrorView)
+        |> render(:not_found)
+    end
   end
 
   def get_raw_transaction(conn, %{"txid" => txid}) do

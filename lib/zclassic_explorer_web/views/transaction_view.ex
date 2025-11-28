@@ -1,11 +1,16 @@
 defmodule ZclassicExplorerWeb.TransactionView do
   use ZclassicExplorerWeb, :view
 
-  def vin_vout_count(tx) do
-    vin_count = length(tx.vin)
-    vout_count = length(tx.vout)
+  def zcash_network do
+    Application.get_env(:zclassic_explorer, Zclassicex)[:zcash_network] || "mainnet"
+  end
+
+  def vin_vout_count(tx) when is_map(tx) do
+    vin_count = length(Map.get(tx, "vin", []))
+    vout_count = length(Map.get(tx, "vout", []))
     "#{vin_count} / #{vout_count}"
   end
+  def vin_vout_count(_), do: "0 / 0"
 
   def vin_count(vin) do
     length(vin)
@@ -20,8 +25,8 @@ defmodule ZclassicExplorerWeb.TransactionView do
   end
 
   def format_zec(value) when value != nil do
-    zcash_network = Application.get_env(:zcash_explorer, Zclassicex)[:zcash_network]
-    currency = if zcash_network == "mainnet", do: "ZEC", else: "TAZ"
+    zcash_network = Application.get_env(:zclassic_explorer, Zclassicex)[:zcash_network]
+    currency = if zcash_network == "mainnet", do: "ZCL", else: "ZCL testnet"
     float_value = (value + 0.0) |> :erlang.float_to_binary([:compact, {:decimals, 10}])
     float_value <> " " <> currency
   end
@@ -489,4 +494,10 @@ defmodule ZclassicExplorerWeb.TransactionView do
     fee = tx_in_total(tx) - abs(tx.valueBalance) - tx_out_total(tx)
     fee |> format_zec()
   end
+
+  # Catch-all for get_shielded_pool_label with map data
+  def get_shielded_pool_label(_tx), do: ""
+
+  # Catch-all for get_shielded_pool_value with map data
+  def get_shielded_pool_value(_tx), do: 0
 end

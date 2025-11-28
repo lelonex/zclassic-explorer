@@ -48,18 +48,27 @@ defmodule ZclassicExplorerWeb.RawMempoolLive do
     if connected?(socket), do: Process.send_after(self(), :update, 5000)
 
     case Cachex.get(:app_cache, "raw_mempool") do
-      {:ok, mempool} ->
+      {:ok, mempool} when is_list(mempool) ->
         {:ok, assign(socket, :raw_mempool, mempool)}
 
+      {:ok, _} ->
+        {:ok, assign(socket, :raw_mempool, [])}
+
       {:error, _reason} ->
-        {:ok, assign(socket, :raw_mempool, "loading...")}
+        {:ok, assign(socket, :raw_mempool, [])}
     end
   end
 
   @impl true
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 5000)
-    {:ok, mempool} = Cachex.get(:app_cache, "raw_mempool")
-    {:noreply, assign(socket, :raw_mempool, mempool)}
+    case Cachex.get(:app_cache, "raw_mempool") do
+      {:ok, mempool} when is_list(mempool) ->
+        {:noreply, assign(socket, :raw_mempool, mempool)}
+      {:ok, _} ->
+        {:noreply, assign(socket, :raw_mempool, [])}
+      {:error, _} ->
+        {:noreply, assign(socket, :raw_mempool, [])}
+    end
   end
 end

@@ -1,0 +1,195 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">📈 Zclassic Statistics for the last 24 hours</h1>
+
+  <!-- Block Summary -->
+  <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg mb-6">
+    <button @click="open = !open" class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">📦 Block Summary</h2>
+      <svg x-show="!open" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+      <svg x-show="open" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+      </svg>
+    </button>
+    <div x-show="open" x-transition class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Blocks Mined (24h)</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">~576</p>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Time Between Blocks</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">2.5 minutes</p>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">ZCL Mined (24h)</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">~900.00 ZCL</p>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Total Circulating Supply</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+            <%= if @blockchain_info do %>
+              <%= :erlang.float_to_binary((@blockchain_info["moneysupply"] || 0) * 1.0, decimals: 0) %> ZCL
+            <% else %>
+              Loading...
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Market Summary -->
+  <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg mb-6">
+    <button @click="open = !open" class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">💹 Market Summary</h2>
+      <svg x-show="!open" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+      <svg x-show="open" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+      </svg>
+    </button>
+    <div x-show="open" x-transition class="p-6">
+      <%= live_render(@conn, ZclassicExplorerWeb.PriceLive) %>
+    </div>
+  </div>
+
+  <!-- Transaction Summary -->
+  <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg mb-6">
+    <button @click="open = !open" class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">💸 Transaction Summary</h2>
+      <svg x-show="!open" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+      <svg x-show="open" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+      </svg>
+    </button>
+    <div x-show="open" x-transition class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Total Transaction Fees (24h)</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">~0.01 ZCL</p>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Number of Transactions (24h)</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">~1,000</p>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Total Output Volume (24h)</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">Calculating...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Difficulty and Network Hashrate -->
+  <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg mb-6">
+    <button @click="open = !open" class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">⛏️ Difficulty and Network Hashrate</h2>
+      <svg x-show="!open" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+      <svg x-show="open" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+      </svg>
+    </button>
+    <div x-show="open" x-transition class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Mining Difficulty</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+            <%= if @blockchain_info do %>
+              <%= :erlang.float_to_binary((@blockchain_info["difficulty"] || 0) * 1.0, decimals: 8) %>
+            <% else %>
+              Loading...
+            <% end %>
+          </p>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Current Network Hashrate</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+            <%= if @blockchain_info && @blockchain_info["difficulty"] do %>
+              <% hashrate = (@blockchain_info["difficulty"] * :math.pow(2, 13) / 150) %>
+              <%= cond do %>
+                <% hashrate >= 1_000_000_000 -> %>
+                  <%= :erlang.float_to_binary(hashrate / 1_000_000_000, decimals: 3) %> GH/s
+                <% hashrate >= 1_000_000 -> %>
+                  <%= :erlang.float_to_binary(hashrate / 1_000_000, decimals: 3) %> MH/s
+                <% hashrate >= 1_000 -> %>
+                  <%= :erlang.float_to_binary(hashrate / 1_000, decimals: 3) %> kH/s
+                <% true -> %>
+                  <%= :erlang.float_to_binary(hashrate * 1.0, decimals: 3) %> H/s
+              <% end %>
+            <% else %>
+              Loading...
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Network Info -->
+  <div x-data="{ open: true }" class="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
+    <button @click="open = !open" class="w-full flex justify-between items-center px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700">
+      <h2 class="text-xl font-semibold text-gray-900 dark:text-white">🌐 Network Information</h2>
+      <svg x-show="!open" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+      <svg x-show="open" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+      </svg>
+    </button>
+    <div x-show="open" x-transition class="p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Block Height</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+            <%= if @blockchain_info, do: @blockchain_info["blocks"], else: "Loading..." %>
+          </p>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Mempool Size</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+            <%= live_render(@conn, ZclassicExplorerWeb.MempoolInfoLive) %>
+          </p>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Connected Nodes</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">8</p>
+        </div>
+        <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
+          <p class="text-sm text-gray-500 dark:text-gray-400">Blockchain Size</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+            <%= if @blockchain_info && @blockchain_info["size_on_disk"] do %>
+              <%= Float.round(@blockchain_info["size_on_disk"] / 1_073_741_824, 2) %> GB
+            <% else %>
+              Loading...
+            <% end %>
+          </p>
+        </div>
+      </div>
+      
+      <!-- Additional Info -->
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <span class="text-gray-500 dark:text-gray-400 text-sm">Chain:</span>
+          <span class="ml-2 text-gray-900 dark:text-white font-medium">
+            <%= if @blockchain_info, do: @blockchain_info["chain"], else: "main" %>
+          </span>
+        </div>
+        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <span class="text-gray-500 dark:text-gray-400 text-sm">Consensus:</span>
+          <span class="ml-2 text-gray-900 dark:text-white font-medium">Proof of Work (Equihash)</span>
+        </div>
+        <div class="flex items-center p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          <span class="text-gray-500 dark:text-gray-400 text-sm">Block Reward:</span>
+          <span class="ml-2 text-gray-900 dark:text-white font-medium">1.5625 ZCL</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

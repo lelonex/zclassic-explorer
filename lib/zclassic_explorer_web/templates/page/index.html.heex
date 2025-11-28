@@ -1,9 +1,9 @@
-<div class="grid gap-4 grid-cols-1 mx-8 py-5">
+<div class="w-full px-4 py-5">
 
 <div>
-  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+  <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
 
-    <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden dark:bg-gray-800">
+    <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden dark:bg-gray-800" style="display:none;">
       <dt>
         <div class="absolute bg-green-500 rounded-md p-3">
 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -16,12 +16,11 @@
          <%= live_render(@conn, ZclassicExplorerWeb.OrchardPoolLive) %>
       <div class="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6 dark:bg-gray-700">
           <div class="text-sm">
-            <a href="/blockchain-info" class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-white dark:hover:text-slate-50">View blockchain info<span class="sr-only"> View blockchain info</span></a>
+            <a href="/blockchain-info" class="font-medium text-orange-600 hover:text-orange-500 dark:text-white dark:hover:text-slate-50">View blockchain info<span class="sr-only"> View blockchain info</span></a>
       </div>
       </div>
       </dd>
     </div>
-
 
     <div class="relative bg-white pt-5 px-4 pb-12 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden dark:bg-gray-800">
       <dt>
@@ -38,7 +37,7 @@
 
         <div class="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6 dark:bg-gray-700">
           <div class="text-sm">
-            <a href="/blocks" class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-white dark:hover:text-slate-50"> View blocks<span class="sr-only"> View blocks</span></a>
+            <a href="/blocks" class="font-medium text-orange-600 hover:text-orange-500 dark:text-white dark:hover:text-slate-50"> View blocks<span class="sr-only"> View blocks</span></a>
           </div>
         </div>
       </dd>
@@ -57,7 +56,7 @@
          <%= live_render(@conn, ZclassicExplorerWeb.MempoolInfoLive) %>
       <div class="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6 dark:bg-gray-700">
         <div class="text-sm">
-            <a href="/mempool" class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-white dark:hover:text-slate-50">View mempool transactions<span class="sr-only"> View mempool transactions</span></a>
+            <a href="/mempool" class="font-medium text-orange-600 hover:text-orange-500 dark:text-white dark:hover:text-slate-50">View mempool transactions<span class="sr-only"> View mempool transactions</span></a>
         </div>
       </div>
       </dd>
@@ -76,7 +75,7 @@
          <%= live_render(@conn, ZclassicExplorerWeb.BlockChainSizeLive) %>
       <div class="absolute bottom-0 inset-x-0 bg-gray-50 px-4 py-4 sm:px-6 dark:bg-gray-700">
           <div class="text-sm">
-            <a href="/blockchain-info" class="font-medium text-indigo-600 hover:text-indigo-500 dark:text-white dark:hover:text-slate-50">View blockchain info<span class="sr-only"> View blockchain info</span></a>
+            <a href="/blockchain-info" class="font-medium text-orange-600 hover:text-orange-500 dark:text-white dark:hover:text-slate-50">View blockchain info<span class="sr-only"> View blockchain info</span></a>
       </div>
       </div>
       </dd>
@@ -84,20 +83,22 @@
   </dl>
 </div>
 
-<div class="grid gap-4 grid-cols-1  md:grid-cols-1 mx-4 my-2">
-    <div>
-        <h3 class="text-lg leading-6 font-medium text-midnight-500 py-3 dark:text-white">
-        Recent Blocks
+<div class="mt-5 grid grid-cols-1 gap-5">
+    <div class="bg-white pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden dark:bg-gray-800">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4 dark:text-white">
+            Recent Blocks
         </h3>
         <%= live_render(@conn, ZclassicExplorerWeb.RecentBlocksLive) %>
     </div>
 </div>
 
-<div>
-    <h3 class="text-lg leading-6 font-medium text-gray-900 py-3 dark:text-white">
-    Recent Transactions
-    </h3>
-    <%= live_render(@conn, ZclassicExplorerWeb.RecentTransactionsLive) %>
+<div class="mt-5 grid grid-cols-1 gap-5">
+    <div class="bg-white pt-5 px-4 pb-6 sm:pt-6 sm:px-6 shadow rounded-lg overflow-hidden dark:bg-gray-800">
+        <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4 dark:text-white">
+            Recent Transactions
+        </h3>
+        <%= live_render(@conn, ZclassicExplorerWeb.RecentTransactionsLive) %>
+    </div>
 </div>
 
 </div>

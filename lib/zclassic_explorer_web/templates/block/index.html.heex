@@ -7,7 +7,7 @@
 
             <h2 id="block-details-title" class="text-lg leading-6 font-medium text-gray-900 inline-block dark:text-gray-50">
             Details for the Zclassic block</h2>
-            <h2 class="inline-block text-gun-powder-500  dark:text-stone-300"> #<%= @block_data.height %></h2>
+            <h2 class="inline-block text-gun-powder-500  dark:text-stone-300"> #<%= Map.get(@block_data, "height") %></h2>
           </div>
           <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
             <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
@@ -16,7 +16,7 @@
                 Hash
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 break-words dark:text-gray-50">
-                <%= @block_data.hash %>
+                <%= Map.get(@block_data, "hash") %>
                 </dd>
               </div>
               <div class="sm:col-span-1">
@@ -24,7 +24,7 @@
                 Mined on
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-gray-50">
-                <%= mined_time @block_data.time %>
+                <%= mined_time Map.get(@block_data, "time") %>
                 </dd>
               </div>
               <div class="sm:col-span-1">
@@ -32,9 +32,9 @@
                 Miner
                 </dt>
 
-                <a href={'/address/#{mined_by(@block_data.tx)}'}>
+                <a href={'/address/#{mined_by(Map.get(@block_data, "tx", []))}'}>
                 <dd class="mt-1 text-sm text-indigo-600 hover:text-indigo-400 break-words dark:text-indigo-200">
-                <%= mined_by @block_data.tx %>
+                <%= mined_by Map.get(@block_data, "tx", []) %>
                 </dd>
               </a>
               </div>
@@ -44,7 +44,7 @@
                 Height
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-gray-50">
-                <%= @block_data.height %>
+                <%= Map.get(@block_data, "height") %>
                 </dd>
               </div>
               <div class="sm:col-span-1">
@@ -52,7 +52,7 @@
                 Transaction count
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-gray-50">
-                <%= transaction_count @block_data.tx %>
+                <%= transaction_count Map.get(@block_data, "tx", []) %>
                 </dd>
               </div>
               <div class="sm:col-span-1">
@@ -60,7 +60,7 @@
                 Input count
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-gray-50">
-                <%= vin_count @block_data.tx %>
+                <%= vin_count Map.get(@block_data, "tx", []) %>
                 </dd>
               </div>
               <div class="sm:col-span-1">
@@ -68,7 +68,7 @@
                 Output count
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-gray-50">
-                <%= vout_count @block_data.tx %>
+                <%= vout_count Map.get(@block_data, "tx", []) %>
                 </dd>
               </div>
               <div class="sm:col-span-1">
@@ -76,7 +76,7 @@
                 Input total
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-gray-50">
-                <%= input_total @block_data.tx %>  <%= if @zcash_network == "mainnet", do: "ZCL", else: "TAZ" %>
+                <%= input_total Map.get(@block_data, "tx", []) %>  <%= if zcash_network() == "mainnet", do: "ZCL", else: "TAZ" %>
                 </dd>
               </div>
               <div class="sm:col-span-1">
@@ -84,7 +84,7 @@
                 Output total
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-gray-50">
-                <%= output_total @block_data.tx %>  <%= if @zcash_network == "mainnet", do: "ZCL", else: "TAZ" %>
+                <%= output_total Map.get(@block_data, "tx", []) %>  <%= if zcash_network() == "mainnet", do: "ZCL", else: "TAZ" %>
                 </dd>
               </div>
               <div class="sm:col-span-1">
@@ -92,7 +92,7 @@
                 Output total
                 </dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-gray-50">
-                <%= output_total @block_data.tx %> <%= if @zcash_network == "mainnet", do: "ZCL", else: "TAZ" %>
+                <%= output_total Map.get(@block_data, "tx", []) %> <%= if zcash_network() == "mainnet", do: "ZCL", else: "TAZ" %>
                 </dd>
               </div>
 
@@ -109,29 +109,29 @@
 
           <div class="py-3 flex justify-between text-sm font-medium">
             <dt class="text-gray-500 dark:text-gray-300">Difficulty</dt>
-            <dd class="text-gray-900 dark:text-gray-400"><%= @block_data.difficulty %></dd>
+            <dd class="text-gray-900 dark:text-gray-400"><%= Map.get(@block_data, "difficulty") %></dd>
           </div>
           <div class="py-3 flex justify-between text-sm font-medium">
             <dt class="text-gray-500 dark:text-gray-300">Size</dt>
-            <dd class="text-gray-900 dark:text-gray-400"><%= @block_data.size %> bytes</dd>
+            <dd class="text-gray-900 dark:text-gray-400"><%= Map.get(@block_data, "size") %> bytes</dd>
           </div>
           <div class="py-3 flex justify-between text-sm font-medium">
             <dt class="text-gray-500 dark:text-gray-300">Version</dt>
-            <dd class="text-gray-900 dark:text-gray-50"><%= @block_data.version %></dd>
+            <dd class="text-gray-900 dark:text-gray-50"><%= Map.get(@block_data, "version") %></dd>
           </div>
           <div class="py-3 flex justify-between text-sm font-medium">
             <dt class="text-gray-500 dark:text-gray-300">Confirmations</dt>
-            <dd class="text-gray-900 dark:text-gray-100"><%= @block_data.confirmations %></dd>
+            <dd class="text-gray-900 dark:text-gray-100"><%= Map.get(@block_data, "confirmations") %></dd>
           </div>
           <div class="py-3 flex justify-between text-sm font-medium">
             <dt class="text-gray-500 dark:text-gray-300">Bits</dt>
-            <dd class="text-gray-900 dark:text-gray-500"><%= @block_data.bits %></dd>
+            <dd class="text-gray-900 dark:text-gray-500"><%= Map.get(@block_data, "bits") %></dd>
           </div>
           <div class="sm:col-span-2">
             <div class="py-3 text-sm font-medium">
               <dt class="text-gray-500 dark:text-gray-300">Merkle root</dt>
               <dd class="text-gray-900 py-1 select-all break-words dark:text-gray-500">
-              <%= @block_data.merkleroot %>
+              <%= Map.get(@block_data, "merkleroot") %>
               </dd>
             </div>
           </div>
@@ -139,7 +139,7 @@
             <div class="py-3 text-sm font-medium">
               <dt class="text-gray-500 dark:text-gray-300">Chainwork</dt>
               <dd class="text-gray-900 py-1 select-all break-words dark:text-gray-500">
-              <%= @block_data.chainwork %>
+              <%= Map.get(@block_data, "chainwork") %>
               </dd>
             </div>
           </div>
@@ -147,7 +147,7 @@
             <div class="py-3 text-sm font-medium">
               <dt class="text-gray-500 dark:text-gray-300">Nonce</dt>
               <dd class="text-gray-900 py-1 select-all break-words dark:text-gray-500">
-              <%= @block_data.nonce %>
+              <%= Map.get(@block_data, "nonce") %>
               </dd>
             </div>
           </div>
@@ -174,7 +174,7 @@
                   Outputs
                 </th>
                 <th scope="col" class="px-6 py-3 text-left  text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Output (<%= if @zcash_network == "mainnet", do: "ZCL", else: "TAZ" %>)
+                  Output (<%= if zcash_network() == "mainnet", do: "ZCL", else: "TAZ" %>)
                 </th>
                 <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Tx Type
@@ -183,22 +183,22 @@
             </thead>
             <tbody>
 
-              <%= for transaction <- @block_data.tx do %>
+              <%= for transaction <- Map.get(@block_data, "tx", []) do %>
               <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-white dark:hover:text-white">
-                  <%= @block_data.height %>
+                  <%= Map.get(@block_data, "height") %>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-200 dark:hover:text-indigo-400">
-              <a href={'/transactions/#{transaction.txid}'}>
+              <a href={'/transactions/#{Map.get(transaction, "txid")}'}>
 
-                    <%= transaction.txid %>
+                    <%= Map.get(transaction, "txid") %>
                   </a>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-50">
-                  <%= length(transaction.vin) %>
+                  <%= length(Map.get(transaction, "vin", [])) %>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-50">
-                  <%= length(transaction.vout) %>
+                  <%= length(Map.get(transaction, "vout", [])) %>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-50">
                   <%= tx_out_total transaction %>

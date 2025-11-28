@@ -2,7 +2,7 @@ defmodule ZclassicExplorerWeb.PageController do
   use ZclassicExplorerWeb, :controller
 
   def index(conn, _params) do
-    render(conn, "index.html", page_title: "Zcash Explorer - Search the Zcash Blockchain")
+    render(conn, "index.html", page_title: "Zclassic Explorer - Search the Zcash Blockchain")
   end
 
   def broadcast(conn, _params) do
@@ -39,7 +39,7 @@ defmodule ZclassicExplorerWeb.PageController do
       csrf_token: get_csrf_token(),
       disclosed_data: nil,
       disclosure_hex: nil,
-      page_title: "Zcash Payment Disclosure"
+      page_title: "Zclassic Payment Disclosure"
     )
   end
 
@@ -54,7 +54,7 @@ defmodule ZclassicExplorerWeb.PageController do
           csrf_token: get_csrf_token(),
           disclosed_data: resp,
           disclosure_hex: disclosure_hex,
-          page_title: "Zcash Payment Disclosure"
+          page_title: "Zclassic Payment Disclosure"
         )
 
       {:error, reason} ->
@@ -64,17 +64,17 @@ defmodule ZclassicExplorerWeb.PageController do
           csrf_token: get_csrf_token(),
           disclosed_data: nil,
           disclosure_hex: disclosure_hex,
-          page_title: "Zcash Payment Disclosure"
+          page_title: "Zclassic Payment Disclosure"
         )
     end
   end
 
   def mempool(conn, _params) do
-    render(conn, "mempool.html", page_title: "Zcash Mempool")
+    render(conn, "mempool.html", page_title: "Zclassic Mempool")
   end
 
   def nodes(conn, _params) do
-    render(conn, "nodes.html", page_title: "Zcash Nodes")
+    render(conn, "nodes.html", page_title: "Zclassic Nodes")
   end
 
   def vk(conn, _params) do
@@ -91,7 +91,7 @@ defmodule ZclassicExplorerWeb.PageController do
     render(conn, "vk.html",
       csrf_token: get_csrf_token(),
       height: height,
-      page_title: "Zcash Viewing Key"
+      page_title: "Zclassic Viewing Key"
     )
   end
 
@@ -113,10 +113,10 @@ defmodule ZclassicExplorerWeb.PageController do
           "--ulimit",
           "nofile=90000:90000",
           "--cpus",
-          Application.get_env(:zcash_explorer, Zclassicex)[:vk_cpus],
+          Application.get_env(:zclassic_explorer, Zclassicex)[:vk_cpus],
           "-m",
-          Application.get_env(:zcash_explorer, Zclassicex)[:vk_mem],
-          Application.get_env(:zcash_explorer, Zclassicex)[:vk_runnner_image],
+          Application.get_env(:zclassic_explorer, Zclassicex)[:vk_mem],
+          Application.get_env(:zclassic_explorer, Zclassicex)[:vk_runnner_image],
           "zecwallet-cli",
           "import",
           vkey,
@@ -130,7 +130,7 @@ defmodule ZclassicExplorerWeb.PageController do
         csrf_token: get_csrf_token(),
         height: height,
         container_id: container_id,
-        page_title: "Zcash Viewing Key"
+        page_title: "Zclassic Viewing Key"
       )
     else
       false ->
@@ -139,7 +139,7 @@ defmodule ZclassicExplorerWeb.PageController do
         |> render("vk.html",
           csrf_token: get_csrf_token(),
           height: height,
-          page_title: "Zcash Viewing Key"
+          page_title: "Zclassic Viewing Key"
         )
     end
   end
@@ -153,7 +153,7 @@ defmodule ZclassicExplorerWeb.PageController do
   end
 
   def blockchain_info(conn, _params) do
-    render(conn, "blockchain_info.html", page_title: "Zcash Blockchain Info")
+    render(conn, "blockchain_info.html", page_title: "Zclassic Blockchain Info")
   end
 
   def blockchain_info_api(conn, _params) do
@@ -161,6 +161,65 @@ defmodule ZclassicExplorerWeb.PageController do
     {:ok, %{"build" => build}} = Cachex.get(:app_cache, "info")
     info = Map.put(info, "build", build)
     json(conn, info)
+  end
+
+  def statistics(conn, _params) do
+    blockchain_info = case Cachex.get(:app_cache, "metrics") do
+      {:ok, info} -> info
+      _ -> nil
+    end
+    
+    stats_data = case Cachex.get(:app_cache, "statistics_data") do
+      {:ok, data} -> data
+      _ -> %{latest: %{}, history: [], charts: %{}}
+    end
+    
+    render(conn, "statistics.html", 
+      blockchain_info: blockchain_info,
+      stats_data: stats_data,
+      page_title: "Zclassic Network Statistics"
+    )
+  end
+
+  def rich_list(conn, _params) do
+    # Get rich list from cache
+    rich_list = case Cachex.get(:app_cache, "rich_list_data") do
+      {:ok, list} when is_list(list) -> list
+      _ -> []
+    end
+    
+    total_supply = case Cachex.get(:app_cache, "metrics") do
+      {:ok, info} -> info["moneysupply"] || 11_462_487
+      _ -> 11_462_487
+    end
+
+    render(conn, "rich_list.html",
+      rich_list: rich_list,
+      total_supply: total_supply,
+      page_title: "Zclassic Rich List - Top Addresses"
+    )
+  end
+
+  def status(conn, _params) do
+    blockchain_info = case Cachex.get(:app_cache, "metrics") do
+      {:ok, info} -> info
+      _ -> nil
+    end
+    
+    node_info = case Zclassicex.getinfo() do
+      {:ok, info} -> info
+      _ -> nil
+    end
+
+    render(conn, "status.html",
+      blockchain_info: blockchain_info,
+      node_info: node_info,
+      page_title: "Zclassic Application Status"
+    )
+  end
+
+  def market(conn, _params) do
+    render(conn, "market.html", page_title: "Zclassic Market Analysis")
   end
 
 end

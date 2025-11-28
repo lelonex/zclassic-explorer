@@ -12,7 +12,7 @@ defmodule ZclassicExplorerWeb.AddressController do
       render(conn, "z_address.html",
         address: address,
         qr: qr,
-        page_title: "Zcash Shielded Address"
+        page_title: "Zclassic Shielded Address"
       )
     end
 
@@ -25,9 +25,17 @@ defmodule ZclassicExplorerWeb.AddressController do
     # if requesting for a block that's not yet mined, cap the request to the latest block
     capped_e = if e > blocks, do: blocks, else: e
 
-    {:ok, balance} = Zclassicex.getaddressbalance(address)
-    {:ok, deltas} = Zclassicex.getaddressdeltas(address, s, capped_e, true)
-    txs = Map.get(deltas, "deltas") |> Enum.reverse()
+    balance = case Zclassicex.getaddressbalance([address]) do
+      {:ok, b} -> b
+      {:error, _} -> %{}
+    end
+    
+    deltas = case Zclassicex.getaddressdeltas([address]) do
+      {:ok, d} -> d
+      {:error, _} -> %{"deltas" => []}
+    end
+    
+    txs = Map.get(deltas, "deltas", []) |> Enum.reverse()
 
     qr =
       address
@@ -44,7 +52,7 @@ defmodule ZclassicExplorerWeb.AddressController do
       start_block: s,
       latest_block: blocks,
       capped_e: capped_e,
-      page_title: "Zcash Address #{address}"
+      page_title: "Zclassic Address #{address}"
     )
   end
 
@@ -59,7 +67,7 @@ defmodule ZclassicExplorerWeb.AddressController do
       render(conn, "z_address.html",
         address: address,
         qr: qr,
-        page_title: "Zcash Shielded Address"
+        page_title: "Zclassic Shielded Address"
       )
     end
 
@@ -69,9 +77,19 @@ defmodule ZclassicExplorerWeb.AddressController do
     e = latest_block
     s = ((c - 1) * (e / c)) |> floor()
     s = if s <= 0, do: 1, else: s
-    {:ok, balance} = Zclassicex.getaddressbalance(address)
-    {:ok, deltas} = Zclassicex.getaddressdeltas(address, s, e, true)
-    txs = Map.get(deltas, "deltas") |> Enum.reverse()
+    
+    # Gestisci correttamente le risposte RPC
+    balance = case Zclassicex.getaddressbalance([address]) do
+      {:ok, b} -> b
+      {:error, _} -> %{}
+    end
+    
+    deltas = case Zclassicex.getaddressdeltas([address]) do
+      {:ok, d} -> d
+      {:error, _} -> %{"deltas" => []}
+    end
+    
+    txs = Map.get(deltas, "deltas", []) |> Enum.reverse()
 
     qr =
       address
@@ -88,7 +106,7 @@ defmodule ZclassicExplorerWeb.AddressController do
       start_block: s,
       latest_block: latest_block,
       capped_e: nil,
-      page_title: "Zcash Address #{address}"
+      page_title: "Zclassic Address #{address}"
     )
   end
 
@@ -109,7 +127,7 @@ defmodule ZclassicExplorerWeb.AddressController do
       render(conn, "u_address.html",
         address: ua,
         qr: u_qr,
-        page_title: "Zcash Unified Address",
+        page_title: "Zclassic Unified Address",
         orchard_present: orchard_present,
         transparent_present: transparent_present,
         sapling_present: sapling_present,

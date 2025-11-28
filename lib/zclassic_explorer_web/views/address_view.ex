@@ -3,14 +3,22 @@ defmodule ZclassicExplorerWeb.AddressView do
 
   def title(:get_address, _assigns), do: "Edit Profile"
 
-  def zatoshi_to_zec(zatoshi) do
+  def zatoshi_to_zec(zatoshi) when is_number(zatoshi) do
     zatoshi_per_zec = :math.pow(10, -8)
     zatoshi_per_zec * zatoshi
   end
+  def zatoshi_to_zec(zatoshi) when is_binary(zatoshi) do
+    case Float.parse(zatoshi) do
+      {num, _} -> zatoshi_to_zec(num)
+      :error -> 0.0
+    end
+  end
+  def zatoshi_to_zec(_), do: 0.0
 
-  def spend_zatoshi(received, balance) do
+  def spend_zatoshi(received, balance) when is_number(received) and is_number(balance) do
     (received - balance) |> zatoshi_to_zec
   end
+  def spend_zatoshi(_, _), do: 0.0
 
   def disable_next(end_block, latest_block) do
     end_block >= latest_block

@@ -12,42 +12,61 @@ defmodule ZclassicExplorer.Blocks.BlockWarmer do
   Executes this cache warmer.
   """
   def execute(_state) do
-    high = DateTime.utc_now() |> DateTime.to_unix()
-    low = DateTime.utc_now() |> DateTime.add(-900, :second) |> DateTime.to_unix()
-    # get the blocks mined in that duration
-
-    case Zclassicex.getblockhashes(high, low, true, false) do
-      {:ok, blocks} ->
-        # enrich the blocks
-        blocks
-        |> Enum.map(fn x ->
-          {:ok, block} = Zclassicex.getblock(x, 2)
-          block_struct = Zclassicex.Block.from_map(block)
-
-          %{
-            "height" => block_struct.height,
-            "size" => block_struct.size,
-            "hash" => block_struct.hash,
-            "time" => ZclassicExplorerWeb.BlockView.mined_time(block_struct.time),
-            "tx_count" => ZclassicExplorerWeb.BlockView.transaction_count(block_struct.tx),
-            "output_total" => ZclassicExplorerWeb.BlockView.output_total(block_struct.tx)
-          }
-        end)
-        |> Enum.sort(&(&1["height"] >= &2["height"]))
-        |> handle_result
+    case Zclassicex.getblockcount() do
+      {:ok, height} when is_integer(height) ->
+        # Prendi gli ultimi 10 blocchi, partendo dal più recente
+        blocks = 
+          Enum.map((max(height - 9, 1))..height, fn h ->
+            case Zclassicex.getblockhash(h) do
+              {:ok, hash} ->
+                case Zclassicex.getblock(hash, 2) do
+                  {:ok, block} when is_map(block) ->
+                    tx_list = Map.get(block, "tx", [])
+                    %{
+                      "height" => Map.get(block, "height"),
+                      "size" => Map.get(block, "size"),
+                      "hash" => Map.get(block, "hash"),
+                      "time" => format_time(Map.get(block, "time")),
+                      "tx_count" => length(tx_list),
+                      "output_total" => calculate_output_total(tx_list)
+                    }
+                  _ -> nil
+                end
+              _ -> nil
+            end
+          end)
+          |> Enum.reject(&is_nil/1)
+          |> Enum.reverse()
+        
+        handle_result(blocks)
 
       {:error, reason} ->
-        {:error, reason} |> handle_result
+        Logger.error("BlockWarmer error: #{inspect(reason)}")
+        :ignore
     end
   end
 
-  # ignores the warmer result in case of error
-  defp handle_result({:error, _reason}) do
-    Logger.error("Error while warming the block cache.")
-    :ignore
+  defp format_time(nil), do: "Unknown"
+  defp format_time(timestamp) when is_integer(timestamp) do
+    abs = timestamp |> Timex.from_unix() |> Timex.format!("{ISOdate} {ISOtime}")
+    rel = timestamp |> Timex.from_unix() |> Timex.format!("{relative}", :relative)
+    abs <> " (" <> rel <> ")"
   end
+  defp format_time(_), do: "Unknown"
 
-  defp handle_result(info) do
+  defp calculate_output_total(txs) when is_list(txs) do
+    result = txs
+    |> Enum.flat_map(fn tx -> Map.get(tx, "vout", []) end)
+    |> Enum.reduce(0, fn vout, acc -> 
+      value = Map.get(vout, "value", 0) || 0
+      acc + value
+    end)
+    result * 1.0 |> Float.to_string()
+  end
+  defp calculate_output_total(_), do: "0"
+
+  defp handle_result(info) when is_list(info) do
+    Logger.debug("BlockWarmer cached #{length(info)} blocks")
     {:ok, [{"block_cache", info}]}
   end
 end

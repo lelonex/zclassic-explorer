@@ -20,7 +20,10 @@ defmodule ZclassicExplorerWeb.Router do
 
     get "/", PageController, :index
     get "/blocks/:hash", BlockController, :get_block
+    get "/blocks", BlockController, :index
+    get "/blocks/date/:date", BlockController, :by_date
     get "/transactions/:txid", TransactionController, :get_transaction
+    get "/market", PageController, :market
     live "/price", PriceLive
     live "/metrics/difficulty", DifficultyLive
     live "/metrics/block_count", BlockCountLive
@@ -46,6 +49,9 @@ defmodule ZclassicExplorerWeb.Router do
     get "/vk", PageController, :vk
     post "/vk", PageController, :do_import_vk
     get "/blockchain-info", PageController, :blockchain_info
+    get "/statistics", PageController, :statistics
+    get "/rich-list", PageController, :rich_list
+    get "/status", PageController, :status
     get "/ua/:address", AddressController, :get_ua
   end
 

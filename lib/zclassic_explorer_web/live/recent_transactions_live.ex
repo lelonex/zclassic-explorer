@@ -1,9 +1,10 @@
 defmodule ZclassicExplorerWeb.RecentTransactionsLive do
   use ZclassicExplorerWeb, :live_view
   import Phoenix.LiveView.Helpers
+  
   @impl true
   def render(assigns) do
-    ~L"""
+    ~H"""
     <div class="shadow overflow-hidden border-gray-200 rounded-lg overflow-x-auto">
     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -13,9 +14,9 @@ defmodule ZclassicExplorerWeb.RecentTransactionsLive do
                 <th scope="col" class="px-6 py-3">Time (UTC )</th>
                 <th scope="col" class="px-6 py-3">Public Output ( <%= case @chain do %>
                 <% "main" -> %>
-                  ZEC
+                  ZCL
                 <% _ -> %>
-                  TAZ
+                  ZCL testnet
               <% end %>  )</th>
                 <th scope="col" class="px-4 py-3">TX Type</th>
             </tr>
@@ -24,12 +25,12 @@ defmodule ZclassicExplorerWeb.RecentTransactionsLive do
       <%= for tx <- @transaction_cache do %>
       <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
       <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-white dark:hover:text-white">
-                <a href='/transactions/<%= tx["txid"] %>'>
+                <a href={"/transactions/#{tx["txid"]}"}>
                   <%= tx["txid"] %>
                 </a>
               </td>
             <td class="px-6 py-4 whitespace-nowrap">
-              <a href='/blocks/<%= tx["block_height"] %>'>
+              <a href={"/blocks/#{tx["block_height"]}"}>
                 <%= tx["block_height"] %>
               </a>
             </td>
@@ -48,7 +49,7 @@ defmodule ZclassicExplorerWeb.RecentTransactionsLive do
                   <% end %>
                   <%= if tx["type"] == "shielded" do %>
                   <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-s font-medium bg-green-400 text-gray-900 capitalize">
-                    🛡 Shielded
+                    �� Shielded
                   </span>
                   <% end %>
                   <%= if tx["type"] == "transparent" do %>
@@ -81,6 +82,7 @@ defmodule ZclassicExplorerWeb.RecentTransactionsLive do
             <% end %>
     </tbody>
     </table>
+    </div>
     """
   end
 
@@ -89,8 +91,11 @@ defmodule ZclassicExplorerWeb.RecentTransactionsLive do
     if connected?(socket), do: Process.send_after(self(), :update, 1000)
 
     case Cachex.get(:app_cache, "transaction_cache") do
-      {:ok, info} ->
-        {:ok, %{"chain" => chain}} = Cachex.get(:app_cache, "metrics")
+      {:ok, info} when is_list(info) ->
+        chain = case Cachex.get(:app_cache, "metrics") do
+          {:ok, %{"chain" => c}} -> c
+          _ -> "main"
+        end
 
         {:ok,
          assign(socket,
@@ -98,15 +103,19 @@ defmodule ZclassicExplorerWeb.RecentTransactionsLive do
            chain: chain
          )}
 
-      {:error, _reason} ->
-        {:ok, assign(socket, :transaction_cache, "loading...")}
+      _ ->
+        {:ok, assign(socket, transaction_cache: [], chain: "main")}
     end
   end
 
   @impl true
   def handle_info(:update, socket) do
     Process.send_after(self(), :update, 1000)
-    {:ok, info} = Cachex.get(:app_cache, "transaction_cache")
-    {:noreply, assign(socket, :transaction_cache, info)}
+    case Cachex.get(:app_cache, "transaction_cache") do
+      {:ok, info} when is_list(info) ->
+        {:noreply, assign(socket, :transaction_cache, info)}
+      _ ->
+        {:noreply, socket}
+    end
   end
 end

@@ -31,7 +31,7 @@ defmodule ZclassicExplorerWeb do
     quote do
       
       use Phoenix.View,
-        root: "lib/zcash_explorer_web/templates",
+        root: "lib/zclassic_explorer_web/templates",
         namespace: ZclassicExplorerWeb
 
       # Import convenience functions from controllers
