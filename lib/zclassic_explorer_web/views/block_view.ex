@@ -221,4 +221,20 @@ defmodule ZclassicExplorerWeb.BlockView do
         "unknown"
     end
   end
+
+  def format_zec(value) when value == nil do
+    ""
+  end
+
+  def format_zec(value) when value != nil do
+    zcash_network = Application.get_env(:zclassic_explorer, Zclassicex)[:zcash_network]
+    currency = "ZCL"
+    float_value = (value + 0.0) |> :erlang.float_to_binary([:compact, {:decimals, 10}])
+    float_value <> " " <> currency
+  end
+
+  def get_shielded_pool_value(tx) when is_map(tx) do
+    TransactionView.get_shielded_pool_value(tx)
+  end
+  def get_shielded_pool_value(_), do: 0
 end

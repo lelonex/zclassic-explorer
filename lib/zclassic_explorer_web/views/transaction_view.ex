@@ -162,11 +162,11 @@ defmodule ZclassicExplorerWeb.TransactionView do
         orchard_actions_len > 0 ->
         orchard_value_balance
 
-      # Shielded output without spend and negative value
+      # Shielded output without spend and negative value (shielding transaction t-z)
       vjoinsplit_len == 0 and vin_len == 0 and vout_len == 0 and
         vshielded_output_len > 0 and vshielded_spend_len == 0 and
         value_balance < 0.0 and version == 5 ->
-        0
+        abs(value_balance)
 
       # Shielded with positive vout
       vjoinsplit_len == 0 and vin_len == 0 and vout_len > 0 and
