@@ -121,7 +121,10 @@
         <%= if length(@txs) == 0 do %>
           <div class="py-8 px-4 text-center">
             <p class="text-gray-500 dark:text-gray-400">
-              No transaction history available. The node may not have address indexing enabled.
+              No transaction history available.
+            </p>
+            <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">
+              The node is building address indexes. Please check back in a few minutes.
             </p>
           </div>
         <% end %>
