@@ -12,12 +12,7 @@ defmodule ZclassicExplorerWeb.RecentTransactionsLive do
                 <th scope="col" class="px-6 py-3">Transaction ID</th>
                 <th scope="col" class="px-6 py-3">Block#</th>
                 <th scope="col" class="px-6 py-3">Time (UTC )</th>
-                <th scope="col" class="px-6 py-3">Public Output ( <%= case @chain do %>
-                <% "main" -> %>
-                  ZCL
-                <% _ -> %>
-                  ZCL testnet
-              <% end %>  )</th>
+                <th scope="col" class="px-6 py-3">Public Output ( ZCL )</th>
                 <th scope="col" class="px-4 py-3">TX Type</th>
             </tr>
             </thead>

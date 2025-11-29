@@ -35,6 +35,13 @@ defmodule ZclassicExplorerWeb.AddressController do
       {:error, _} -> %{"deltas" => []}
     end
     
+    # If balance is empty, calculate from deltas
+    balance = if map_size(balance) == 0 do
+      calculate_balance_from_deltas(Map.get(deltas, "deltas", []))
+    else
+      balance
+    end
+    
     txs = Map.get(deltas, "deltas", []) |> Enum.reverse()
 
     qr =
@@ -89,6 +96,13 @@ defmodule ZclassicExplorerWeb.AddressController do
       {:error, _} -> %{"deltas" => []}
     end
     
+    # If balance is empty, calculate from deltas
+    balance = if map_size(balance) == 0 do
+      calculate_balance_from_deltas(Map.get(deltas, "deltas", []))
+    else
+      balance
+    end
+    
     txs = Map.get(deltas, "deltas", []) |> Enum.reverse()
 
     qr =
@@ -135,4 +149,20 @@ defmodule ZclassicExplorerWeb.AddressController do
       )
     end
   end
+
+  # Helper function to calculate balance from deltas when getaddressbalance is not available
+  defp calculate_balance_from_deltas(deltas) when is_list(deltas) do
+    deltas
+    |> Enum.reduce(%{"balance" => 0, "received" => 0}, fn delta, acc ->
+      amount = Map.get(delta, "amount", 0)
+      satoshis = Map.get(delta, "satoshis", 0)
+      
+      received = acc["received"] + abs(satoshis)
+      balance = if satoshis > 0, do: acc["balance"] + satoshis, else: acc["balance"] + satoshis
+      
+      %{"balance" => balance, "received" => received}
+    end)
+  end
+
+  defp calculate_balance_from_deltas(_), do: %{"balance" => 0, "received" => 0}
 end

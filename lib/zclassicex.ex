@@ -178,19 +178,19 @@ defmodule Zclassicex do
   def validateaddress(address), do: call("validateaddress", [address])
 
   @doc "Get address balance"
-  def getaddressbalance(addresses), do: call("getaddressbalance", %{"addresses" => addresses})
+  def getaddressbalance(addresses), do: call("getaddressbalance", [%{"addresses" => addresses}])
 
   @doc "Get address deltas"
-  def getaddressdeltas(addresses), do: call("getaddressdeltas", %{"addresses" => addresses})
+  def getaddressdeltas(addresses), do: call("getaddressdeltas", [%{"addresses" => addresses}])
 
   @doc "Get address txids"
-  def getaddresstxids(addresses), do: call("getaddresstxids", %{"addresses" => addresses})
+  def getaddresstxids(addresses), do: call("getaddresstxids", [%{"addresses" => addresses}])
 
   @doc "Get address utxos"
-  def getaddressutxos(addresses), do: call("getaddressutxos", %{"addresses" => addresses})
+  def getaddressutxos(addresses), do: call("getaddressutxos", [%{"addresses" => addresses}])
 
   @doc "Get address mempool"
-  def getaddressmempool(addresses), do: call("getaddressmempool", %{"addresses" => addresses})
+  def getaddressmempool(addresses), do: call("getaddressmempool", [%{"addresses" => addresses}])
 
   @doc "Get block deltas"
   def getblockdeltas(hash), do: call("getblockdeltas", [hash])

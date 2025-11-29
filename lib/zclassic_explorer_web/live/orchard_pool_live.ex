@@ -3,7 +3,7 @@ defmodule ZclassicExplorerWeb.OrchardPoolLive do
   import Phoenix.LiveView.Helpers
   @impl true
   def render(assigns) do
-    currency = if(assigns.blockchain_info["chain"] == "main", do: "ZCL", else: "ZCL testnet")
+    currency = "ZCL"
 
     ~L"""
     <p class="text-2xl font-semibold text-gray-900 dark:dark:bg-slate-800 dark:text-slate-100">

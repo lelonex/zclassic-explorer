@@ -27,7 +27,7 @@
             </p>
           </div>
           <div class="inline-flex items-center  px-2.5 py-0.5 text-sm leading-5 font-medium  text-gray-700  tabular-nums antialiased dark:text-gray-50">
-            <%= ZclassicExplorerWeb.TransactionView.format_zec(zatoshi_to_zec(@balance["balance"])) %>
+            <%= ZclassicExplorerWeb.TransactionView.format_zec(zatoshi_to_zec(Map.get(@balance, "balance", 0))) %>
           </div>
         </div>
       </li>
@@ -42,7 +42,7 @@
           </div>
           <div class="inline-flex items-center  px-2.5 py-0.5 text-sm leading-5 font-medium  text-gray-700  tabular-nums antialiased dark:text-gray-50">
           
-            <%= ZclassicExplorerWeb.TransactionView.format_zec(zatoshi_to_zec(@balance["received"])) %>
+            <%= ZclassicExplorerWeb.TransactionView.format_zec(zatoshi_to_zec(Map.get(@balance, "received", 0))) %>
            
           </div>
         </div>
@@ -58,7 +58,7 @@
           </div>
           <div class="inline-flex items-center  px-2.5 py-0.5 text-sm leading-5 font-medium  text-gray-700  tabular-nums antialiased dark:text-gray-50">
              
-            <%= ZclassicExplorerWeb.TransactionView.format_zec(spend_zatoshi(@balance["received"],@balance["balance"])) %>
+            <%= ZclassicExplorerWeb.TransactionView.format_zec(spend_zatoshi(Map.get(@balance, "received", 0),Map.get(@balance, "balance", 0))) %>
             
           </div>
         </div>

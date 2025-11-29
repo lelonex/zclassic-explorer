@@ -14,7 +14,7 @@ defmodule ZclassicExplorerWeb.RecentBlocksLive do
                 <th scope="col" class="px-4 py-3">Mined on</th>
                 <th scope="col" class="px-4 py-3">Txns</th>
                 <th scope="col" class="px-4 py-3">Size</th>
-                <th scope="col" class="px-4 py-3">Output ( <%= if @chain == "main", do: "ZCL", else: "ZCL testnet" %> )</th>
+                <th scope="col" class="px-4 py-3">Output ( ZCL )</th>
             </tr>
             </thead>
     <tbody>
