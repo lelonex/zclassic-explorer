@@ -26,8 +26,8 @@ defmodule ZclassicExplorerWeb.AddressController do
     # if requesting for a block that's not yet mined, cap the request to the latest block
     capped_e = if e > blocks, do: blocks, else: e
 
-    # Use blockchain scanner to find transactions
-    {txs, balance} = ZclassicExplorer.BlockchainScanner.get_address_transactions(address, 100)
+    # Use blockchain scanner to find transactions (limited scan for speed)
+    {txs, balance} = ZclassicExplorer.BlockchainScanner.get_address_transactions(address, 20)
     txs = Enum.reverse(txs)
 
     qr =
@@ -71,8 +71,8 @@ defmodule ZclassicExplorerWeb.AddressController do
     s = ((c - 1) * (e / c)) |> floor()
     s = if s <= 0, do: 1, else: s
     
-    # Use blockchain scanner to find transactions
-    {txs, balance} = ZclassicExplorer.BlockchainScanner.get_address_transactions(address, 100)
+    # Use blockchain scanner to find transactions (limited scan for speed)
+    {txs, balance} = ZclassicExplorer.BlockchainScanner.get_address_transactions(address, 20)
     txs = Enum.reverse(txs)
 
     qr =

@@ -9,8 +9,9 @@ defmodule ZclassicExplorer.BlockchainScanner do
   Scan recent blocks to find transactions for a given address.
   Returns a list of deltas (transaction data) and calculated balance.
   Uses caching to avoid rescanning the same blocks.
+  WARNING: This is slow without AddressIndex. Consider enabling AddressIndex on the node.
   """
-  def get_address_transactions(address, scan_depth \\ 2000) do
+  def get_address_transactions(address, scan_depth \\ 2000, timeout_ms \\ 30000) do
     cache_key = "addr_txs_#{address}"
     
     # Try to get from cache first
@@ -20,10 +21,24 @@ defmodule ZclassicExplorer.BlockchainScanner do
         cached_result
         
       _ ->
-        result = do_scan_address(address, scan_depth)
-        # Cache for 5 minutes
-        Cachex.put(:app_cache, cache_key, result, opts: [ttl: :timer.minutes(5)])
-        result
+        result = Task.yield(
+          Task.async(fn -> do_scan_address(address, scan_depth) end),
+          timeout_ms
+        )
+        
+        final_result = case result do
+          {:ok, scan_result} ->
+            Cachex.put(:app_cache, cache_key, scan_result, opts: [ttl: :timer.minutes(5)])
+            scan_result
+          nil ->
+            Logger.warn("Blockchain scan for #{address} timed out after #{timeout_ms}ms")
+            {[], %{"balance" => 0, "received" => 0}}
+          {:exit, reason} ->
+            Logger.error("Blockchain scan for #{address} crashed: #{inspect(reason)}")
+            {[], %{"balance" => 0, "received" => 0}}
+        end
+        
+        final_result
     end
   end
 
@@ -86,7 +101,7 @@ defmodule ZclassicExplorer.BlockchainScanner do
   end
 
   defp analyze_transaction(txid, address, block_height) do
-    case Zclassicex.getrawtransaction(txid) do
+    case Zclassicex.getrawtransaction(txid, 0) do
       {:ok, raw_tx} ->
         case Zclassicex.decoderawtransaction(raw_tx) do
           {:ok, tx} ->
@@ -137,7 +152,7 @@ defmodule ZclassicExplorer.BlockchainScanner do
         case get_input_address(prev_txid, prev_vout) do
           {:ok, input_address} when input_address == address ->
             # Need to get the value from the previous output
-            case Zclassicex.getrawtransaction(prev_txid) do
+            case Zclassicex.getrawtransaction(prev_txid, 0) do
               {:ok, prev_raw} ->
                 case Zclassicex.decoderawtransaction(prev_raw) do
                   {:ok, prev_tx} ->
@@ -175,7 +190,7 @@ defmodule ZclassicExplorer.BlockchainScanner do
   end
 
   defp get_input_address(txid, vout) do
-    case Zclassicex.getrawtransaction(txid) do
+    case Zclassicex.getrawtransaction(txid, 0) do
       {:ok, raw_tx} ->
         case Zclassicex.decoderawtransaction(raw_tx) do
           {:ok, tx} ->
