@@ -1,5 +1,6 @@
 defmodule ZclassicExplorerWeb.AddressController do
   use ZclassicExplorerWeb, :controller
+  require Logger
 
   def get_address(conn, %{"address" => address, "s" => s, "e" => e}) do
     if String.starts_with?(address, ["zc", "zs"]) do
@@ -27,12 +28,16 @@ defmodule ZclassicExplorerWeb.AddressController do
 
     balance = case Zclassicex.getaddressbalance([address]) do
       {:ok, b} -> b
-      {:error, _} -> %{}
+      {:error, error} -> 
+        Logger.warn("getaddressbalance failed for #{address}: #{inspect(error)}")
+        %{}
     end
     
     deltas = case Zclassicex.getaddressdeltas([address]) do
       {:ok, d} -> d
-      {:error, _} -> %{"deltas" => []}
+      {:error, error} -> 
+        Logger.warn("getaddressdeltas failed for #{address}: #{inspect(error)}")
+        %{"deltas" => []}
     end
     
     # If balance is empty, calculate from deltas
@@ -88,12 +93,16 @@ defmodule ZclassicExplorerWeb.AddressController do
     # Gestisci correttamente le risposte RPC
     balance = case Zclassicex.getaddressbalance([address]) do
       {:ok, b} -> b
-      {:error, _} -> %{}
+      {:error, error} -> 
+        Logger.warn("getaddressbalance failed for #{address}: #{inspect(error)}")
+        %{}
     end
     
     deltas = case Zclassicex.getaddressdeltas([address]) do
       {:ok, d} -> d
-      {:error, _} -> %{"deltas" => []}
+      {:error, error} -> 
+        Logger.warn("getaddressdeltas failed for #{address}: #{inspect(error)}")
+        %{"deltas" => []}
     end
     
     # If balance is empty, calculate from deltas
