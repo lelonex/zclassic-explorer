@@ -204,7 +204,7 @@
                   <%= if tx_type(transaction) == "shielding" or tx_type(transaction) == "deshielding" or tx_type(transaction) == "shielded" do %>
                     <%= format_zec(get_shielded_pool_value(transaction)) %>
                   <% else %>
-                    <%= tx_out_total transaction %>
+                    <%= tx_out_total(transaction) %> <%= if zcash_network() == "mainnet", do: "ZCL", else: "TAZ" %>
                   <% end %>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -88,25 +88,56 @@ defmodule ZclassicExplorerWeb.BlockView do
   end
 
   def input_total(txs) when is_list(txs) and length(txs) > 0 do
-    txs
+    # Sum all public inputs (vin) - excluding coinbase
+    public_total = txs
     |> Enum.drop(1)  # Skip coinbase transaction
     |> Enum.flat_map(fn x -> Map.get(x, "vin", []) end)
     |> Enum.reduce(0, fn x, acc -> 
       value = Map.get(x, "value", 0) || 0
       acc + value
     end)
+    
+    # Sum all shielded inputs (negative valueBalance represents coins from shielded pool)
+    shielded_total = txs
+    |> Enum.drop(1)  # Skip coinbase
+    |> Enum.reduce(0, fn tx, acc ->
+      value_balance = Map.get(tx, "valueBalance", 0) || 0
+      # Only count negative balances (shielding inputs)
+      if value_balance < 0 do
+        acc + abs(value_balance)
+      else
+        acc
+      end
+    end)
+    
+    (public_total + shielded_total)
     |> Kernel.*(1.0)
     |> Float.to_string()
   end
   def input_total(_), do: "0"
 
   def output_total(txs) when is_list(txs) do
-    txs
+    # Sum all public outputs (vout)
+    public_total = txs
     |> Enum.flat_map(fn x -> Map.get(x, "vout", []) end)
     |> Enum.reduce(0, fn x, acc -> 
       value = Map.get(x, "value", 0) || 0
       acc + value
     end)
+    
+    # Sum all shielded outputs (positive valueBalance)
+    shielded_total = txs
+    |> Enum.reduce(0, fn tx, acc ->
+      value_balance = Map.get(tx, "valueBalance", 0) || 0
+      # Only count positive balances (deshielding outputs)
+      if value_balance > 0 do
+        acc + value_balance
+      else
+        acc
+      end
+    end)
+    
+    (public_total + shielded_total)
     |> Kernel.*(1.0)
     |> Float.to_string()
   end
