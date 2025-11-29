@@ -118,17 +118,18 @@
       <!-- TX List -->
       <div class="bg-white lg:min-w-0 lg:flex-1 dark:bg-gray-800">
       
-        <% if Enum.empty?(@txs) do %>
+        <%= if length(@txs) == 0 do %>
           <div class="py-8 px-4 text-center">
             <p class="text-gray-500 dark:text-gray-400">
               No transaction history available. The node may not have address indexing enabled.
             </p>
           </div>
-        <% else %>
+        <% end %>
+        
         <ul class="relative z-0 divide-y divide-gray-200  border-gray-200 dark:divide-gray-500">
 
 
-<%= for delta <- @txs do %>
+<% for delta <- @txs do %>
       
       <li class="relative pl-4 pr-6 py-5 hover:bg-indigo-50 sm:py-6 sm:pl-6 lg:pl-8 xl:pl-6 dark:hover:bg-gray-700 rounded">
 
@@ -184,7 +185,6 @@
           </li>
  <% end %>
 </ul>
-        <% end %>
  
 </div>
 
