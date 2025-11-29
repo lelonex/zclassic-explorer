@@ -87,14 +87,6 @@
                 <%= output_total Map.get(@block_data, "tx", []) %>  <%= if zcash_network() == "mainnet", do: "ZCL", else: "TAZ" %>
                 </dd>
               </div>
-              <div class="sm:col-span-1">
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">
-                Output total
-                </dt>
-                <dd class="mt-1 text-sm text-gray-900 dark:text-gray-50">
-                <%= output_total Map.get(@block_data, "tx", []) %> <%= if zcash_network() == "mainnet", do: "ZCL", else: "TAZ" %>
-                </dd>
-              </div>
 
             </dl>
           </div>
@@ -201,8 +193,8 @@
                   <%= length(Map.get(transaction, "vout", [])) %>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-50">
-                  <%= if tx_type(transaction) == "shielding" or tx_type(transaction) == "deshielding" or tx_type(transaction) == "shielded" do %>
-                    <%= format_zec(get_shielded_pool_value(transaction)) %>
+                  <%= if tx_type(transaction) == "shielding" do %>
+                    <%= format_zec(abs(get_shielded_pool_value(transaction))) %> <small>(→ shielded)</small>
                   <% else %>
                     <%= tx_out_total(transaction) %> <%= if zcash_network() == "mainnet", do: "ZCL", else: "TAZ" %>
                   <% end %>
