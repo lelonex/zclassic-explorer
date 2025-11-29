@@ -120,8 +120,13 @@ defmodule ZclassicExplorerWeb.BlockController do
     end
   end
 
+  def index(conn, %{"date" => date}) do
+    by_date(conn, %{"date" => date})
+  end
+
   def index(conn, _params) do
     today = Timex.today()
+    today_str = today |> Timex.format!("{YYYY}-{0M}-{D}")
     disable_next = true
     disable_previous = false
     previous = Timex.shift(today, days: -1) |> Timex.format!("{YYYY}-{0M}-{D}")
@@ -144,7 +149,7 @@ defmodule ZclassicExplorerWeb.BlockController do
 
         render(conn, "blocks.html",
           blocks_data: blocks_data,
-          date: today,
+          date: today_str,
           disable_next: disable_next,
           disable_previous: disable_previous,
           previous: previous,
@@ -154,7 +159,7 @@ defmodule ZclassicExplorerWeb.BlockController do
       {:error, _reason} ->
         render(conn, "blocks.html",
           blocks_data: [],
-          date: today,
+          date: today_str,
           disable_next: disable_next,
           disable_previous: disable_previous,
           previous: previous,
