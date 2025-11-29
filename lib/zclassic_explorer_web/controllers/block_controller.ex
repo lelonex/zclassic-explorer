@@ -124,7 +124,7 @@ defmodule ZclassicExplorerWeb.BlockController do
     today = Timex.today()
     disable_next = true
     disable_previous = false
-    previous = Timex.shift(today, days: -1)
+    previous = Timex.shift(today, days: -1) |> Timex.format!("{YYYY}-{0M}-{D}")
 
     # Usa getblockcount + getblockhash invece di getblockhashes
     case Zclassicex.getblockcount() do
