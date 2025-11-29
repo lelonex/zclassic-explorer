@@ -163,11 +163,10 @@ defmodule ZclassicExplorerWeb.AddressController do
   defp calculate_balance_from_deltas(deltas) when is_list(deltas) do
     deltas
     |> Enum.reduce(%{"balance" => 0, "received" => 0}, fn delta, acc ->
-      amount = Map.get(delta, "amount", 0)
       satoshis = Map.get(delta, "satoshis", 0)
       
       received = acc["received"] + abs(satoshis)
-      balance = if satoshis > 0, do: acc["balance"] + satoshis, else: acc["balance"] + satoshis
+      balance = acc["balance"] + satoshis
       
       %{"balance" => balance, "received" => received}
     end)
