@@ -26,28 +26,9 @@ defmodule ZclassicExplorerWeb.AddressController do
     # if requesting for a block that's not yet mined, cap the request to the latest block
     capped_e = if e > blocks, do: blocks, else: e
 
-    balance = case Zclassicex.getaddressbalance([address]) do
-      {:ok, b} -> b
-      {:error, error} -> 
-        Logger.warn("getaddressbalance failed for #{address}: #{inspect(error)}")
-        %{}
-    end
-    
-    deltas = case Zclassicex.getaddressdeltas([address]) do
-      {:ok, d} -> d
-      {:error, error} -> 
-        Logger.warn("getaddressdeltas failed for #{address}: #{inspect(error)}")
-        %{"deltas" => []}
-    end
-    
-    # If balance is empty, calculate from deltas
-    balance = if map_size(balance) == 0 do
-      calculate_balance_from_deltas(Map.get(deltas, "deltas", []))
-    else
-      balance
-    end
-    
-    txs = Map.get(deltas, "deltas", []) |> Enum.reverse()
+    # Use blockchain scanner to find transactions
+    {txs, balance} = ZclassicExplorer.BlockchainScanner.get_address_transactions(address, 100)
+    txs = Enum.reverse(txs)
 
     qr =
       address
@@ -90,29 +71,9 @@ defmodule ZclassicExplorerWeb.AddressController do
     s = ((c - 1) * (e / c)) |> floor()
     s = if s <= 0, do: 1, else: s
     
-    # Gestisci correttamente le risposte RPC
-    balance = case Zclassicex.getaddressbalance([address]) do
-      {:ok, b} -> b
-      {:error, error} -> 
-        Logger.warn("getaddressbalance failed for #{address}: #{inspect(error)}")
-        %{}
-    end
-    
-    deltas = case Zclassicex.getaddressdeltas([address]) do
-      {:ok, d} -> d
-      {:error, error} -> 
-        Logger.warn("getaddressdeltas failed for #{address}: #{inspect(error)}")
-        %{"deltas" => []}
-    end
-    
-    # If balance is empty, calculate from deltas
-    balance = if map_size(balance) == 0 do
-      calculate_balance_from_deltas(Map.get(deltas, "deltas", []))
-    else
-      balance
-    end
-    
-    txs = Map.get(deltas, "deltas", []) |> Enum.reverse()
+    # Use blockchain scanner to find transactions
+    {txs, balance} = ZclassicExplorer.BlockchainScanner.get_address_transactions(address, 100)
+    txs = Enum.reverse(txs)
 
     qr =
       address
@@ -154,23 +115,8 @@ defmodule ZclassicExplorerWeb.AddressController do
         orchard_present: orchard_present,
         transparent_present: transparent_present,
         sapling_present: sapling_present,
-        details: details
-      )
+      details: details
+    )
     end
   end
-
-  # Helper function to calculate balance from deltas when getaddressbalance is not available
-  defp calculate_balance_from_deltas(deltas) when is_list(deltas) do
-    deltas
-    |> Enum.reduce(%{"balance" => 0, "received" => 0}, fn delta, acc ->
-      satoshis = Map.get(delta, "satoshis", 0)
-      
-      received = acc["received"] + abs(satoshis)
-      balance = acc["balance"] + satoshis
-      
-      %{"balance" => balance, "received" => received}
-    end)
-  end
-
-  defp calculate_balance_from_deltas(_), do: %{"balance" => 0, "received" => 0}
 end
